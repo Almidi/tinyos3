@@ -25,6 +25,12 @@
 #include "bios.h"
 #include "tinyos.h"
 
+//VDK Edit
+//Scheduler Queue Size:
+#define SCHED_LEVELS 5
+#define BOOST 1000
+static unsigned boost_counter;
+
 /*****************************
  *
  *  The Thread Control Block
@@ -106,7 +112,9 @@ typedef struct thread_control_block
 
   struct thread_control_block * prev;  /**< previous context */
   struct thread_control_block * next;  /**< next context */
-  
+
+//  VDK Edit
+  unsigned priority;
 } TCB;
 
 

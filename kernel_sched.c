@@ -133,6 +133,12 @@ TCB* spawn_thread(PCB* pcb, void (*func)())
   tcb->phase = CTX_CLEAN;
   tcb->thread_func = func;
   tcb->wakeup_time = NO_TIMEOUT;
+
+//  VDK Edit
+//  Init tcb on middle of priority queue
+  tcb->priority = SCHED_LEVELS/2;
+//  assert(tcb->priority);
+
   rlnode_init(& tcb->sched_node, tcb);  /* Intrusive list node */
 
 
@@ -191,8 +197,8 @@ CCB cctx[MAX_CORES];
 
 /*
   The scheduler queue is implemented as a doubly linked list. The
-  head and tail of this list are stored in  SCHED.
-	
+  head and tail of this list are stored in  SCHEDQ.
+
   Also, the scheduler contains a linked list of all the sleeping
   threads with a timeout.
 
@@ -200,10 +206,11 @@ CCB cctx[MAX_CORES];
 */
 
 
-rlnode SCHED;                         /* The scheduler queue */
+//VDK Edit
+rlnode SCHEDQ[SCHED_LEVELS];             /* The scheduler queue */
 rlnode TIMEOUT_LIST;				  /* The list of threads with a timeout */
-Mutex sched_spinlock = MUTEX_INIT;    /* spinlock for scheduler queue */
 
+Mutex sched_spinlock = MUTEX_INIT;    /* spinlock for scheduler queue */
 
 
 /* Interrupt handler for ALARM */
@@ -217,7 +224,6 @@ void ici_handler()
 {
   /* noop for now... */
 }
-
 
 /*
   Possibly add TCB to the scheduler timeout list.
@@ -250,9 +256,8 @@ static void sched_register_timeout(TCB* tcb, TimerDuration timeout)
 */
 static void sched_queue_add(TCB* tcb)
 {
-  /* Insert at the end of the scheduling list */
-  rlist_push_back(& SCHED, & tcb->sched_node);
-
+  /* Insert at the end of the scheduling queue list */
+  rlist_push_back(& SCHEDQ[tcb -> priority], & tcb->sched_node);
   /* Restart possibly halted cores */
   cpu_core_restart_one();
 }
@@ -302,11 +307,17 @@ static TCB* sched_queue_select()
   		sched_make_ready(tcb);
   }
 
-  /* Get the head of the SCHED list */
-  rlnode * sel = rlist_pop_front(& SCHED);
-
-  return sel->tcb;  /* When the list is empty, this is NULL */
-} 
+  /* Get the head of the SCHEDQ list */
+//  VDK Edit
+    rlnode * sel;
+    for(int i = 0; i<SCHED_LEVELS;i++){
+        if (!is_rlist_empty(& SCHEDQ[i])){
+            sel = rlist_pop_front(& SCHEDQ[i]);
+            return sel->tcb;  /* When the list is empty, this is NULL */
+        }
+    }
+    return NULL;
+}
 
 
 /*
@@ -374,9 +385,23 @@ void sleep_releasing(Thread_state state, Mutex* mx, enum SCHED_CAUSE cause, Time
   if(preempt) preempt_on;
 }
 
+void boost(){
+//    fprintf(stdout, "BOOST");
+    rlnode * TEMPNODE;          /* Temp Node*/
+    //for all queues except the middle one
+    for (int i=0;i<SCHED_LEVELS;i++){
+        if(i != SCHED_LEVELS/2) {
+            //put everything in the middle queue/priority
+            while(!is_rlist_empty(&SCHEDQ[i])){
+                TEMPNODE = rlist_pop_front(&SCHEDQ[i]);
+                TEMPNODE -> tcb ->priority = SCHED_LEVELS/2;
+                rlist_push_back(&SCHEDQ[SCHED_LEVELS/2],TEMPNODE);
+            }
+        }
+    }
+}
 
 /* This function is the entry point to the scheduler's context switching */
-
 void yield(enum SCHED_CAUSE cause)
 { 
   /* Reset the timer, so that we are not interrupted by ALARM */
@@ -390,6 +415,50 @@ void yield(enum SCHED_CAUSE cause)
   int current_ready = 0;
 
   Mutex_Lock(& sched_spinlock);
+
+//VDK Edit
+
+//Boost
+if(++boost_counter > BOOST){
+    boost_counter = 0;
+    boost();
+}
+
+
+
+  switch(cause){
+      case SCHED_QUANTUM:  /**< The quantum has expired */
+          current->priority++;
+//        fprintf(stdout, "Quantum Yield: Level: %d\n", current->priority);
+          break;
+      case SCHED_IO:       /**< The thread is waiting for I/O */
+          current->priority--;
+//        fprintf(stdout, "IO Yield: Level: %d\n", current->priority);
+          break;
+      case SCHED_MUTEX:    /**< Mutex_Lock yielded on contention */
+          break;
+      case SCHED_PIPE:     /**< Sleep at a pipe or socket */
+          break;
+      case SCHED_POLL:     /**< The thread is polling a device */
+          break;
+      case SCHED_IDLE:     /**< The idle thread called yield */
+          break;
+      case SCHED_USER:      /**< User-space code called yield */
+          break;
+      default:
+          fprintf(stderr, "BAD CAUSE for current thread %p in yield: %d\n", current, current->state);
+          assert(0);  /* It should not be READY or EXITED ! */
+  }
+
+  //Set Priority under constraints
+  if (current->priority < 0){
+      current->priority = 0;
+  }
+  if (current->priority > SCHED_LEVELS-1){
+      current->priority = SCHED_LEVELS-1;
+  }
+
+
   switch(current->state)
   {
     case RUNNING:
@@ -510,8 +579,16 @@ static void idle_thread()
  */
 void initialize_scheduler()
 {
-  rlnode_init(&SCHED, NULL);
+  //VDK Edit
+  //init sched queue
+  for(int i = 0;i<SCHED_LEVELS;i++){
+      rlnode_init(&SCHEDQ[i], NULL);
+  }
+  //init timeout list
   rlnode_init(&TIMEOUT_LIST, NULL);
+
+  //init boost counter
+  boost_counter = 0;
 }
 
 
@@ -530,6 +607,9 @@ void run_scheduler()
   curcore->idle_thread.state = RUNNING;
   curcore->idle_thread.phase = CTX_DIRTY;
   curcore->idle_thread.wakeup_time = NO_TIMEOUT;
+//  VDK Edit
+  curcore->idle_thread.priority = 0;
+
   rlnode_init(& curcore->idle_thread.sched_node, & curcore->idle_thread);
 
   /* Initialize interrupt handler */

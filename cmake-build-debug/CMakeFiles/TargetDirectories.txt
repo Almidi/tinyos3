@@ -1,0 +1,3 @@
+/home/almidi/Documents/OSs/tinyos3/cmake-build-debug/CMakeFiles/rebuild_cache.dir
+/home/almidi/Documents/OSs/tinyos3/cmake-build-debug/CMakeFiles/edit_cache.dir
+/home/almidi/Documents/OSs/tinyos3/cmake-build-debug/CMakeFiles/tinyos3.dir

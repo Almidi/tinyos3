@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6"/>
+	<Project>
+		<Option title="tinyos3"/>
+		<Option makefile_is_custom="1"/>
+		<Option compiler="gcc"/>
+		<Option virtualFolders="CMake Files\;"/>
+		<Build>
+			<Target title="all">
+				<Option working_dir="/home/almidi/Documents/OSs/tinyos3/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j6 -f &quot;/home/almidi/Documents/OSs/tinyos3/cmake-build-debug/Makefile&quot;  VERBOSE=1 all"/>
+					<CompileFile command="/usr/bin/make -j6 -f &quot;/home/almidi/Documents/OSs/tinyos3/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j6 -f &quot;/home/almidi/Documents/OSs/tinyos3/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j6 -f &quot;/home/almidi/Documents/OSs/tinyos3/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="rebuild_cache">
+				<Option working_dir="/home/almidi/Documents/OSs/tinyos3/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j6 -f &quot;/home/almidi/Documents/OSs/tinyos3/cmake-build-debug/Makefile&quot;  VERBOSE=1 rebuild_cache"/>
+					<CompileFile command="/usr/bin/make -j6 -f &quot;/home/almidi/Documents/OSs/tinyos3/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j6 -f &quot;/home/almidi/Documents/OSs/tinyos3/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j6 -f &quot;/home/almidi/Documents/OSs/tinyos3/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="edit_cache">
+				<Option working_dir="/home/almidi/Documents/OSs/tinyos3/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j6 -f &quot;/home/almidi/Documents/OSs/tinyos3/cmake-build-debug/Makefile&quot;  VERBOSE=1 edit_cache"/>
+					<CompileFile command="/usr/bin/make -j6 -f &quot;/home/almidi/Documents/OSs/tinyos3/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j6 -f &quot;/home/almidi/Documents/OSs/tinyos3/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j6 -f &quot;/home/almidi/Documents/OSs/tinyos3/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="tinyos3">
+				<Option output="/home/almidi/Documents/OSs/tinyos3/cmake-build-debug/tinyos3" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/almidi/Documents/OSs/tinyos3/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/home/almidi/Documents/OSs/tinyos3/."/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/8.2.1/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/8.2.1/include-fixed"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j6 -f &quot;/home/almidi/Documents/OSs/tinyos3/cmake-build-debug/Makefile&quot;  VERBOSE=1 tinyos3"/>
+					<CompileFile command="/usr/bin/make -j6 -f &quot;/home/almidi/Documents/OSs/tinyos3/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j6 -f &quot;/home/almidi/Documents/OSs/tinyos3/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j6 -f &quot;/home/almidi/Documents/OSs/tinyos3/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="tinyos3/fast">
+				<Option output="/home/almidi/Documents/OSs/tinyos3/cmake-build-debug/tinyos3" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/almidi/Documents/OSs/tinyos3/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/home/almidi/Documents/OSs/tinyos3/."/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/8.2.1/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/8.2.1/include-fixed"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j6 -f &quot;/home/almidi/Documents/OSs/tinyos3/cmake-build-debug/Makefile&quot;  VERBOSE=1 tinyos3/fast"/>
+					<CompileFile command="/usr/bin/make -j6 -f &quot;/home/almidi/Documents/OSs/tinyos3/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j6 -f &quot;/home/almidi/Documents/OSs/tinyos3/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j6 -f &quot;/home/almidi/Documents/OSs/tinyos3/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+		</Build>
+		<Unit filename="/home/almidi/Documents/OSs/tinyos3/bios.c">
+			<Option target="tinyos3"/>
+		</Unit>
+		<Unit filename="/home/almidi/Documents/OSs/tinyos3/bios.h">
+			<Option target="tinyos3"/>
+		</Unit>
+		<Unit filename="/home/almidi/Documents/OSs/tinyos3/bios_example1.c">
+			<Option target="tinyos3"/>
+		</Unit>
+		<Unit filename="/home/almidi/Documents/OSs/tinyos3/bios_example2.c">
+			<Option target="tinyos3"/>
+		</Unit>
+		<Unit filename="/home/almidi/Documents/OSs/tinyos3/bios_example3.c">
+			<Option target="tinyos3"/>
+		</Unit>
+		<Unit filename="/home/almidi/Documents/OSs/tinyos3/bios_example4.c">
+			<Option target="tinyos3"/>
+		</Unit>
+		<Unit filename="/home/almidi/Documents/OSs/tinyos3/bios_example5.c">
+			<Option target="tinyos3"/>
+		</Unit>
+		<Unit filename="/home/almidi/Documents/OSs/tinyos3/console.c">
+			<Option target="tinyos3"/>
+		</Unit>
+		<Unit filename="/home/almidi/Documents/OSs/tinyos3/kernel_cc.c">
+			<Option target="tinyos3"/>
+		</Unit>
+		<Unit filename="/home/almidi/Documents/OSs/tinyos3/kernel_cc.h">
+			<Option target="tinyos3"/>
+		</Unit>
+		<Unit filename="/home/almidi/Documents/OSs/tinyos3/kernel_dev.c">
+			<Option target="tinyos3"/>
+		</Unit>
+		<Unit filename="/home/almidi/Documents/OSs/tinyos3/kernel_dev.h">
+			<Option target="tinyos3"/>
+		</Unit>
+		<Unit filename="/home/almidi/Documents/OSs/tinyos3/kernel_init.c">
+			<Option target="tinyos3"/>
+		</Unit>
+		<Unit filename="/home/almidi/Documents/OSs/tinyos3/kernel_pipe.c">
+			<Option target="tinyos3"/>
+		</Unit>
+		<Unit filename="/home/almidi/Documents/OSs/tinyos3/kernel_proc.c">
+			<Option target="tinyos3"/>
+		</Unit>
+		<Unit filename="/home/almidi/Documents/OSs/tinyos3/kernel_proc.h">
+			<Option target="tinyos3"/>
+		</Unit>
+		<Unit filename="/home/almidi/Documents/OSs/tinyos3/kernel_sched.c">
+			<Option target="tinyos3"/>
+		</Unit>
+		<Unit filename="/home/almidi/Documents/OSs/tinyos3/kernel_sched.h">
+			<Option target="tinyos3"/>
+		</Unit>
+		<Unit filename="/home/almidi/Documents/OSs/tinyos3/kernel_socket.c">
+			<Option target="tinyos3"/>
+		</Unit>
+		<Unit filename="/home/almidi/Documents/OSs/tinyos3/kernel_streams.c">
+			<Option target="tinyos3"/>
+		</Unit>
+		<Unit filename="/home/almidi/Documents/OSs/tinyos3/kernel_streams.h">
+			<Option target="tinyos3"/>
+		</Unit>
+		<Unit filename="/home/almidi/Documents/OSs/tinyos3/kernel_sys.c">
+			<Option target="tinyos3"/>
+		</Unit>
+		<Unit filename="/home/almidi/Documents/OSs/tinyos3/kernel_sys.h">
+			<Option target="tinyos3"/>
+		</Unit>
+		<Unit filename="/home/almidi/Documents/OSs/tinyos3/kernel_threads.c">
+			<Option target="tinyos3"/>
+		</Unit>
+		<Unit filename="/home/almidi/Documents/OSs/tinyos3/mtask.c">
+			<Option target="tinyos3"/>
+		</Unit>
+		<Unit filename="/home/almidi/Documents/OSs/tinyos3/symposium.c">
+			<Option target="tinyos3"/>
+		</Unit>
+		<Unit filename="/home/almidi/Documents/OSs/tinyos3/symposium.h">
+			<Option target="tinyos3"/>
+		</Unit>
+		<Unit filename="/home/almidi/Documents/OSs/tinyos3/terminal.c">
+			<Option target="tinyos3"/>
+		</Unit>
+		<Unit filename="/home/almidi/Documents/OSs/tinyos3/test_example.c">
+			<Option target="tinyos3"/>
+		</Unit>
+		<Unit filename="/home/almidi/Documents/OSs/tinyos3/test_util.c">
+			<Option target="tinyos3"/>
+		</Unit>
+		<Unit filename="/home/almidi/Documents/OSs/tinyos3/tinyos.h">
+			<Option target="tinyos3"/>
+		</Unit>
+		<Unit filename="/home/almidi/Documents/OSs/tinyos3/tinyos_shell.c">
+			<Option target="tinyos3"/>
+		</Unit>
+		<Unit filename="/home/almidi/Documents/OSs/tinyos3/tinyoslib.c">
+			<Option target="tinyos3"/>
+		</Unit>
+		<Unit filename="/home/almidi/Documents/OSs/tinyos3/tinyoslib.h">
+			<Option target="tinyos3"/>
+		</Unit>
+		<Unit filename="/home/almidi/Documents/OSs/tinyos3/unit_testing.c">
+			<Option target="tinyos3"/>
+		</Unit>
+		<Unit filename="/home/almidi/Documents/OSs/tinyos3/unit_testing.h">
+			<Option target="tinyos3"/>
+		</Unit>
+		<Unit filename="/home/almidi/Documents/OSs/tinyos3/util.c">
+			<Option target="tinyos3"/>
+		</Unit>
+		<Unit filename="/home/almidi/Documents/OSs/tinyos3/util.h">
+			<Option target="tinyos3"/>
+		</Unit>
+		<Unit filename="/home/almidi/Documents/OSs/tinyos3/validate_api.c">
+			<Option target="tinyos3"/>
+		</Unit>
+		<Unit filename="/home/almidi/Documents/OSs/tinyos3/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\"/>
+		</Unit>
+	</Project>
+</CodeBlocks_project_file>
