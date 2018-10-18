@@ -428,14 +428,16 @@ if(++boost_counter > BOOST){
 
   switch(cause){
       case SCHED_QUANTUM:  /**< The quantum has expired */
-          current->priority++;
+          current->priority++; //lower priority
 //        fprintf(stdout, "Quantum Yield: Level: %d\n", current->priority);
           break;
       case SCHED_IO:       /**< The thread is waiting for I/O */
-          current->priority--;
+          current->priority--; //increase priority
 //        fprintf(stdout, "IO Yield: Level: %d\n", current->priority);
           break;
       case SCHED_MUTEX:    /**< Mutex_Lock yielded on contention */
+          current->priority++; //lower priority
+//        fprintf(stdout, "MUTEX Yield: Level: %d\n", current->priority);
           break;
       case SCHED_PIPE:     /**< Sleep at a pipe or socket */
           break;
