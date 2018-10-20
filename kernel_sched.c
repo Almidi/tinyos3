@@ -555,9 +555,10 @@ void gain(int preempt)
   if(preempt) preempt_on;
 
   /* Set a 1-quantum alarm */
-  bios_set_timer(QUANTUM);
+  //  VDK Edit:
+  // Set Dynamically Thread Quantum
+  bios_set_timer(QUANTUM/(SCHED_LEVELS-current->priority+1));
 }
-
 
 static void idle_thread()
 {
@@ -592,8 +593,6 @@ void initialize_scheduler()
   //init boost counter
   boost_counter = 0;
 }
-
-
 
 void run_scheduler()
 {

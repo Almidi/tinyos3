@@ -1,4 +1,4 @@
-/home/almidi/.local/share/JetBrains/Toolbox/apps/CLion/ch-0/182.4505.18/bin/cmake/linux/bin/cmake -DCMAKE_BUILD_TYPE=Debug -G "CodeBlocks - Unix Makefiles" /home/almidi/Documents/OSs/tinyos3
+/home/almidi/.local/share/JetBrains/Toolbox/apps/CLion/ch-0/182.3684.76/bin/cmake/linux/bin/cmake -DCMAKE_BUILD_TYPE=Debug -G "CodeBlocks - Unix Makefiles" /home/almidi/TUC/OS/tinyos3
 -- The C compiler identification is GNU 8.2.1
 -- Check for working C compiler: /usr/bin/cc
 -- Check for working C compiler: /usr/bin/cc -- works
@@ -8,4 +8,4 @@
 -- Detecting C compile features - done
 -- Configuring done
 -- Generating done
--- Build files have been written to: /home/almidi/Documents/OSs/tinyos3/cmake-build-debug
+-- Build files have been written to: /home/almidi/TUC/OS/tinyos3/cmake-build-debug

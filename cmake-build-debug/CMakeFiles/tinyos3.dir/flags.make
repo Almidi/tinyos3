@@ -6,5 +6,5 @@ C_FLAGS = -g   -std=gnu11
 
 C_DEFINES = 
 
-C_INCLUDES = -I/home/almidi/Documents/OSs/tinyos3/. 
+C_INCLUDES = -I/home/almidi/TUC/OS/tinyos3/. 
 
