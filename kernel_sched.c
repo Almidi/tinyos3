@@ -385,19 +385,18 @@ void sleep_releasing(Thread_state state, Mutex* mx, enum SCHED_CAUSE cause, Time
   if(preempt) preempt_on;
 }
 
+
 void boost(){
-//    fprintf(stdout, "BOOST");
+    //fprintf(stdout, "BOOST");
     rlnode * TEMPNODE;          /* Temp Node*/
-    //for all queues except the middle one
-    for (int i=0;i<SCHED_LEVELS;i++){
-        if(i != SCHED_LEVELS/2) {
-            //put everything in the middle queue/priority
-            while(!is_rlist_empty(&SCHEDQ[i])){
-                TEMPNODE = rlist_pop_front(&SCHEDQ[i]);
-                TEMPNODE -> tcb ->priority = SCHED_LEVELS/2;
-                rlist_push_back(&SCHEDQ[SCHED_LEVELS/2],TEMPNODE);
-            }
-        }
+    //for all queues except the first
+    for (int i=1;i<SCHED_LEVELS;i++){
+          //put everything in the middle queue/priority
+          while(!is_rlist_empty(&SCHEDQ[i])){
+              TEMPNODE = rlist_pop_front(&SCHEDQ[i]);
+              TEMPNODE -> tcb ->priority--;
+              rlist_push_back(&SCHEDQ[TEMPNODE->tcb->priority],TEMPNODE);
+          }
     }
 }
 
