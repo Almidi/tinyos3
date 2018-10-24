@@ -435,7 +435,10 @@ if(++boost_counter > BOOST){
 //        fprintf(stdout, "IO Yield: Level: %d\n", current->priority);
           break;
       case SCHED_MUTEX:    /**< Mutex_Lock yielded on contention */
-          current->priority++; //lower priority
+          // lower priority only when cause is SCHED_MUTEX twice in a row
+          if (current->prevcause == SCHED_MUTEX){
+            current->priority++; //lower priority
+          } 
 //        fprintf(stdout, "MUTEX Yield: Level: %d\n", current->priority);
           break;
       case SCHED_PIPE:     /**< Sleep at a pipe or socket */
@@ -459,6 +462,7 @@ if(++boost_counter > BOOST){
       current->priority = SCHED_LEVELS-1;
   }
 
+  current->prevcause = cause;
 
   switch(current->state)
   {

@@ -115,6 +115,7 @@ typedef struct thread_control_block
 
 //  VDK Edit
   unsigned priority;
+  enum SCHED_CAUSE prevcause;
 } TCB;
 
 
