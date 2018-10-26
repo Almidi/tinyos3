@@ -13,6 +13,12 @@
   <component name="ChangeListManager">
     <list default="true" id="6ae7aa0b-28d5-4b8f-bf68-e5453bd69e5a" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/kernel_proc.c" beforeDir="false" afterPath="$PROJECT_DIR$/kernel_proc.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/kernel_proc.h" beforeDir="false" afterPath="$PROJECT_DIR$/kernel_proc.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/kernel_sched.c" beforeDir="false" afterPath="$PROJECT_DIR$/kernel_sched.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/kernel_sched.h" beforeDir="false" afterPath="$PROJECT_DIR$/kernel_sched.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/kernel_threads.c" beforeDir="false" afterPath="$PROJECT_DIR$/kernel_threads.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/util.h" beforeDir="false" afterPath="$PROJECT_DIR$/util.h" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/cmake-build-debug/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -90,83 +96,158 @@
         </counts>
       </usages-collector>
     </session>
+    <session id="100089905">
+      <usages-collector id="statistics.file.extensions.edit">
+        <counts>
+          <entry key="c" value="1094" />
+          <entry key="h" value="398" />
+        </counts>
+      </usages-collector>
+      <usages-collector id="statistics.file.types.edit">
+        <counts>
+          <entry key="Doxygen file" value="15" />
+          <entry key="ObjectiveC" value="1477" />
+        </counts>
+      </usages-collector>
+      <usages-collector id="statistics.file.extensions.open">
+        <counts>
+          <entry key="c" value="5" />
+          <entry key="h" value="7" />
+        </counts>
+      </usages-collector>
+      <usages-collector id="statistics.file.types.open">
+        <counts>
+          <entry key="ObjectiveC" value="12" />
+        </counts>
+      </usages-collector>
+    </session>
   </component>
   <component name="FileEditorManager">
-    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/kernel_proc.c">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="874">
-              <caret line="38" column="24" selection-start-line="38" selection-start-column="22" selection-end-line="38" selection-end-column="24" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/kernel_proc.h">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1265">
-              <caret line="55" column="52" selection-start-line="55" selection-start-column="52" selection-end-line="55" selection-end-column="52" />
-              <folding>
-                <element signature="e#313#332#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/kernel_sched.c">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="667">
-              <caret line="557" column="11" selection-start-line="557" selection-start-column="6" selection-end-line="557" selection-end-column="11" />
-              <folding>
-                <element signature="e#1476#1952#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/tinyos.h">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="69">
-              <caret line="48" column="67" lean-forward="true" selection-start-line="48" selection-start-column="67" selection-end-line="48" selection-end-column="67" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/kernel_sched.h">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="5451">
-              <caret line="237" column="5" selection-start-line="237" selection-start-column="5" selection-end-line="237" selection-end-column="5" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-    </leaf>
+    <splitter split-orientation="horizontal" split-proportion="0.5">
+      <split-first>
+        <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
+          <file pinned="false" current-in-tab="true">
+            <entry file="file://$PROJECT_DIR$/kernel_threads.c">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="349">
+                  <caret line="98" column="29" selection-start-line="98" selection-start-column="29" selection-end-line="98" selection-end-column="29" />
+                  <folding>
+                    <element signature="e#1#20#0" expanded="true" />
+                    <element signature="e#804#937#0" />
+                    <element signature="e#804#995#0" />
+                    <element signature="e#997#1129#0" />
+                  </folding>
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/tinyos.h">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="211">
+                  <caret line="215" column="14" selection-start-line="215" selection-start-column="14" selection-end-line="215" selection-end-column="14" />
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file pinned="false" current-in-tab="false">
+            <entry file="file:///usr/include/stdint.h">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="220">
+                  <caret line="89" column="28" selection-start-line="89" selection-start-column="28" selection-end-line="89" selection-end-column="28" />
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/kernel_sched.h">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="183">
+                  <caret line="26" selection-start-line="26" selection-end-line="26" />
+                  <folding>
+                    <element signature="e#360#377#0" expanded="true" />
+                  </folding>
+                </state>
+              </provider>
+            </entry>
+          </file>
+        </leaf>
+      </split-first>
+      <split-second>
+        <leaf>
+          <file pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/kernel_proc.h">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="237">
+                  <caret line="69" column="16" selection-start-line="69" selection-start-column="16" selection-end-line="69" selection-end-column="16" />
+                  <folding>
+                    <element signature="e#313#332#0" expanded="true" />
+                  </folding>
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file pinned="false" current-in-tab="true">
+            <entry file="file://$PROJECT_DIR$/kernel_proc.c">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="432">
+                  <caret line="31" column="22" selection-start-line="31" selection-start-column="22" selection-end-line="31" selection-end-column="22" />
+                  <folding>
+                    <element signature="e#1#20#0" expanded="true" />
+                  </folding>
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/kernel_sched.c">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="202">
+                  <caret line="617" column="40" selection-start-line="617" selection-start-column="40" selection-end-line="617" selection-end-column="40" />
+                  <folding>
+                    <element signature="e#1#20#0" expanded="true" />
+                    <element signature="e#1476#1952#0" expanded="true" />
+                  </folding>
+                </state>
+              </provider>
+            </entry>
+          </file>
+        </leaf>
+      </split-second>
+    </splitter>
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>SCHED</find>
-      <find>SCHEDQ</find>
-      <find>SCHEDQ[0]</find>
-      <find>SCHEDQ[</find>
-      <find>sched_queue_add</find>
-      <find>yield</find>
-      <find>quantum</find>
-      <find>stderr</find>
-      <find>spawn</find>
-      <find>level</find>
-      <find>prior</find>
-      <find>priori</find>
-      <find>TCB</find>
       <find>priority</find>
       <find>idle</find>
       <find>VDK</find>
       <find>is_rlist_empty</find>
-      <find>boost</find>
       <find>VDK E</find>
+      <find>join</find>
+      <find>split</find>
+      <find>typedef uintptr_t</find>
+      <find>uintptr_t</find>
+      <find>Condvar</find>
+      <find>boos</find>
+      <find>SCHEDQ</find>
+      <find>sys_exec</find>
+      <find>thread</find>
+      <find>System call to create</find>
+      <find>SCHED_CAUSE</find>
+      <find>initialize</find>
+      <find>boost</find>
+      <find>spawn_thre</find>
+      <find>run_sch</find>
+      <find>sys_</find>
+      <find>sys_Exec</find>
+      <find>cur</find>
+      <find>initiali</find>
+      <find>spawn</find>
+      <find>spa</find>
+      <find>spawn_thread</find>
+      <find>func</find>
+      <find>spaw</find>
+      <find>get_</find>
     </findStrings>
     <replaceStrings>
       <replace>SCHEDQ</replace>
@@ -178,9 +259,13 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/kernel_sched.h" />
-        <option value="$PROJECT_DIR$/kernel_sched.c" />
         <option value="$PROJECT_DIR$/tinyos.h" />
+        <option value="$PROJECT_DIR$/util.h" />
+        <option value="$PROJECT_DIR$/kernel_proc.h" />
+        <option value="$PROJECT_DIR$/kernel_proc.c" />
+        <option value="$PROJECT_DIR$/kernel_sched.c" />
+        <option value="$PROJECT_DIR$/kernel_sched.h" />
+        <option value="$PROJECT_DIR$/kernel_threads.c" />
       </list>
     </option>
   </component>
@@ -205,7 +290,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -217,6 +301,7 @@
           <select />
         </subPane>
       </pane>
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -224,6 +309,7 @@
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
     <property name="nodejs_npm_path_reset_for_default_project" value="true" />
+    <property name="settings.editor.selected.configurable" value="preferences.pluginManager" />
   </component>
   <component name="RunDashboard">
     <option name="ruleStates">
@@ -272,13 +358,21 @@
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="21045000" />
+    <option name="totallyTimeSpent" value="37020000" />
+  </component>
+  <component name="TodoView">
+    <todo-panel id="selected-file">
+      <is-autoscroll-to-source value="true" />
+    </todo-panel>
+    <todo-panel id="all">
+      <are-packages-shown value="true" />
+      <is-autoscroll-to-source value="true" />
+    </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="-1" y="23" width="1922" height="1022" extended-state="6" />
-    <editor active="true" />
+    <frame x="-5" y="24" width="1930" height="1061" extended-state="6" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.1748401" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.10074627" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
@@ -287,10 +381,10 @@
       <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
-      <window_info anchor="bottom" id="TODO" order="6" />
+      <window_info anchor="bottom" id="TODO" order="6" weight="0.32934782" />
       <window_info anchor="bottom" id="Database Changes" order="7" show_stripe_button="false" />
-      <window_info anchor="bottom" id="Version Control" order="8" />
-      <window_info active="true" anchor="bottom" id="Terminal" order="9" sideWeight="0.50053304" visible="true" weight="0.1991001" />
+      <window_info anchor="bottom" id="Version Control" order="8" weight="0.32934782" />
+      <window_info active="true" anchor="bottom" id="Terminal" order="9" sideWeight="0.50053304" visible="true" weight="0.23586957" />
       <window_info anchor="bottom" id="Event Log" order="10" side_tool="true" />
       <window_info anchor="bottom" id="Messages" order="11" weight="0.28324324" />
       <window_info anchor="bottom" id="CMake" order="12" sideWeight="0.49946696" weight="0.32972974" />
@@ -307,6 +401,17 @@
   <component name="VcsContentAnnotationSettings">
     <option name="myLimit" value="2678400000" />
   </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+          <url>file:///HDD/TUC/OS/2018/tinyos3/kernel_sched.c</url>
+          <line>87</line>
+          <option name="timeStamp" value="2" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
+  </component>
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/CMakeLists.txt">
       <provider selected="true" editor-type-id="text-editor">
@@ -315,51 +420,95 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/doc/latex/group__check__macros.tex" />
     <entry file="file://$PROJECT_DIR$/util.h">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="267">
-          <caret line="298" column="15" selection-start-line="298" selection-start-column="15" selection-end-line="298" selection-end-column="15" />
+        <state relative-caret-position="345">
+          <caret line="288" column="19" selection-start-line="288" selection-start-column="19" selection-end-line="288" selection-end-column="19" />
+          <folding>
+            <element signature="e#32#51#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/doc/latex/group__check__macros.tex" />
-    <entry file="file://$PROJECT_DIR$/kernel_proc.c">
+    <entry file="file://$PROJECT_DIR$/kernel_sys.h">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="874">
-          <caret line="38" column="24" selection-start-line="38" selection-start-column="22" selection-end-line="38" selection-end-column="24" />
+        <state relative-caret-position="376">
+          <caret line="41" column="8" selection-start-line="41" selection-start-column="8" selection-end-line="41" selection-end-column="8" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file:///HDD/TUC/OS/2018/tinyos3/kernel_sched.c">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="94">
+          <caret line="82" column="2" lean-forward="true" selection-start-line="82" selection-start-column="2" selection-end-line="82" selection-end-column="2" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/kernel_proc.h">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1265">
-          <caret line="55" column="52" selection-start-line="55" selection-start-column="52" selection-end-line="55" selection-end-column="52" />
+        <state relative-caret-position="237">
+          <caret line="69" column="16" selection-start-line="69" selection-start-column="16" selection-end-line="69" selection-end-column="16" />
           <folding>
             <element signature="e#313#332#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/kernel_sched.c">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="202">
+          <caret line="617" column="40" selection-start-line="617" selection-start-column="40" selection-end-line="617" selection-end-column="40" />
+          <folding>
+            <element signature="e#1#20#0" expanded="true" />
+            <element signature="e#1476#1952#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/kernel_sched.h">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="5451">
-          <caret line="237" column="5" selection-start-line="237" selection-start-column="5" selection-end-line="237" selection-end-column="5" />
+        <state relative-caret-position="183">
+          <caret line="26" selection-start-line="26" selection-end-line="26" />
+          <folding>
+            <element signature="e#360#377#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file:///usr/include/stdint.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="220">
+          <caret line="89" column="28" selection-start-line="89" selection-start-column="28" selection-end-line="89" selection-end-column="28" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/kernel_proc.c">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="432">
+          <caret line="31" column="22" selection-start-line="31" selection-start-column="22" selection-end-line="31" selection-end-column="22" />
+          <folding>
+            <element signature="e#1#20#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/tinyos.h">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="69">
-          <caret line="48" column="67" lean-forward="true" selection-start-line="48" selection-start-column="67" selection-end-line="48" selection-end-column="67" />
+        <state relative-caret-position="211">
+          <caret line="215" column="14" selection-start-line="215" selection-start-column="14" selection-end-line="215" selection-end-column="14" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/kernel_sched.c">
+    <entry file="file://$PROJECT_DIR$/kernel_threads.c">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="667">
-          <caret line="557" column="11" selection-start-line="557" selection-start-column="6" selection-end-line="557" selection-end-column="11" />
+        <state relative-caret-position="349">
+          <caret line="98" column="29" selection-start-line="98" selection-start-column="29" selection-end-line="98" selection-end-column="29" />
           <folding>
-            <element signature="e#1476#1952#0" expanded="true" />
+            <element signature="e#1#20#0" expanded="true" />
+            <element signature="e#804#937#0" />
+            <element signature="e#804#995#0" />
+            <element signature="e#997#1129#0" />
           </folding>
         </state>
       </provider>

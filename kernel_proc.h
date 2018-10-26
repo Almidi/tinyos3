@@ -53,10 +53,32 @@ typedef struct process_control_block {
   rlnode exited_node;     /**< Intrusive node for @c exited_list */
   CondVar child_exit;     /**< Condition variable for @c WaitChild */
 
+  //VDK Edit
+  rlnode ptcb_list;       /**<List of PTCBs*/
+  uint ptcb_counter;      /**<PTCB List Counter */
+
   FCB* FIDT[MAX_FILEID];  /**< The fileid table of the process */
 
 } PCB;
 
+
+//VDK Edit
+//PTCB Definition
+typedef struct process_thread_control_block{
+    Tid_t tid;
+    PCB* owner_pcb;	//owner pcb
+    TCB* thread;
+    int exitval;
+    Task task;
+    int argl;
+    void *args;
+
+    unsigned refCount;		//used every time in join
+    unsigned isDetached;	//used in Detached
+    unsigned isExited;
+    CondVar cVar;	//will be used in thread join, kernelwait
+    rlnode node;
+}PTCB;
 
 /**
   @brief Initialize the process table.

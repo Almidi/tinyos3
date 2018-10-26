@@ -43,7 +43,14 @@ static inline void initialize_PCB(PCB* pcb)
   rlnode_init(& pcb->exited_list, NULL);
   rlnode_init(& pcb->children_node, pcb);
   rlnode_init(& pcb->exited_node, pcb);
+
+//  VDK Edit
+  rlnode_init(& pcb->ptcb_list, NULL);
+  pcb ->ptcb_counter = 0;
+
+
   pcb->child_exit = COND_INIT;
+
 }
 
 

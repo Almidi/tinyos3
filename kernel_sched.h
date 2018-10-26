@@ -80,7 +80,8 @@ enum SCHED_CAUSE {
   SCHED_PIPE,     /**< Sleep at a pipe or socket */
   SCHED_POLL,     /**< The thread is polling a device */
   SCHED_IDLE,     /**< The idle thread called yield */
-  SCHED_USER      /**< User-space code called yield */
+  SCHED_USER,     /**< User-space code called yield */
+  SCHED_SPAWN     /**< The thread just spawned */
 };
 
 
@@ -94,27 +95,29 @@ enum SCHED_CAUSE {
 typedef struct thread_control_block
 {
   PCB* owner_pcb;       /**< This is null for a free TCB */
+  //VDK Edit
+  PTCB* owner_ptcb;    /**< This is null for the main thread */
 
   cpu_context_t context;     /**< The thread context */
-
 #ifndef NVALGRIND
-  unsigned valgrind_stack_id; /**< This is useful in order to register the thread stack to valgrind */
-#endif
+    unsigned valgrind_stack_id; /**< This is useful in order to register the thread stack to valgrind */
 
-  Thread_type type;       /**< The type of thread */
-  Thread_state state;    /**< The state of the thread */
+#endif
+    Thread_type type;       /**< The type of thread */
+    Thread_state state;    /**< The state of the thread */
+
   Thread_phase phase;    /**< The phase of the thread */
 
   void (*thread_func)();   /**< The function executed by this thread */
+    TimerDuration wakeup_time; /**< The time this thread will be woken up by the scheduler */
 
-  TimerDuration wakeup_time; /**< The time this thread will be woken up by the scheduler */
   rlnode sched_node;      /**< node to use when queueing in the scheduler lists */
+    struct thread_control_block * prev;  /**< previous context */
 
-  struct thread_control_block * prev;  /**< previous context */
   struct thread_control_block * next;  /**< next context */
-
 //  VDK Edit
   unsigned priority;
+
   enum SCHED_CAUSE prevcause;
 } TCB;
 

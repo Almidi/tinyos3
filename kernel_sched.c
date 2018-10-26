@@ -124,8 +124,13 @@ TCB* spawn_thread(PCB* pcb, void (*func)())
   /* The allocated thread size must be a multiple of page size */
   TCB* tcb = (TCB*) allocate_thread(THREAD_SIZE);
 
-  /* Set the owner */
+  /* Set the owner pcb*/
   tcb->owner_pcb = pcb;
+
+  //VDK Edit
+  /*Set owner ptcb*/
+  tcb->owner_ptcb = NULL;
+
 
   /* Initialize the other attributes */
   tcb->type = NORMAL_THREAD;
@@ -135,7 +140,9 @@ TCB* spawn_thread(PCB* pcb, void (*func)())
   tcb->wakeup_time = NO_TIMEOUT;
 
 //  VDK Edit
-//  Init tcb on middle of priority queue
+//Init prev cause
+  tcb->prevcause = SCHED_SPAWN;
+//Init tcb on middle of priority queue
   tcb->priority = SCHED_LEVELS/2;
 //  assert(tcb->priority);
 
@@ -157,7 +164,7 @@ TCB* spawn_thread(PCB* pcb, void (*func)())
   Mutex_Lock(&active_threads_spinlock);
   active_threads++;
   Mutex_Unlock(&active_threads_spinlock);
- 
+
   return tcb;
 }
 
@@ -391,7 +398,7 @@ void boost(){
     rlnode * TEMPNODE;          /* Temp Node*/
     //for all queues except the first
     for (int i=1;i<SCHED_LEVELS;i++){
-          //put everything in the middle queue/priority
+          //increase priority
           while(!is_rlist_empty(&SCHEDQ[i])){
               TEMPNODE = rlist_pop_front(&SCHEDQ[i]);
               TEMPNODE -> tcb ->priority--;
@@ -418,10 +425,10 @@ void yield(enum SCHED_CAUSE cause)
 //VDK Edit
 
 //Boost
-if(++boost_counter > BOOST){
-    boost_counter = 0;
-    boost();
-}
+  if(++boost_counter > BOOST){
+      boost_counter = 0;
+      boost();
+  }
 
 
 
@@ -448,6 +455,8 @@ if(++boost_counter > BOOST){
       case SCHED_IDLE:     /**< The idle thread called yield */
           break;
       case SCHED_USER:      /**< User-space code called yield */
+          break;
+      case SCHED_SPAWN:     /**< The thread just spawned */
           break;
       default:
           fprintf(stderr, "BAD CAUSE for current thread %p in yield: %d\n", current, current->state);
