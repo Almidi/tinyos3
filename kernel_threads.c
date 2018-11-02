@@ -2,6 +2,9 @@
 #include "tinyos.h"
 #include "kernel_sched.h"
 #include "kernel_proc.h"
+//VDK Edit
+//We include that file to use kernel functions
+#include "kernel_cc.h"
 
 //VDK Edit
 /* The memory allocated for the PTCB must be a multiple of SYSTEM_PAGE_SIZE */
@@ -63,11 +66,16 @@ Tid_t get_tid(TCB* tcb)
 /**
   @Function for created threads (not main threads)
   */
-void start_thread(Task call, int argl, void* args)
+void start_thread()
 {
+    PTCB* cur_ptcb = CURTHREAD->owner_ptcb;
     int exitval;
+    Task call = cur_ptcb->task;
+    int argl = cur_ptcb->argl;
+    void* args = cur_ptcb->args;
     exitval = call(argl,args);
-    Exit(exitval);
+    assert(cur_ptcb != NULL);
+    ThreadExit(exitval);
 }
 
 /** 
@@ -96,11 +104,16 @@ Tid_t sys_CreateThread(Task task, int argl, void* args)
     rlnode_init(& ptcb->node, ptcb);  /* Intrusive list node */
     rlist_push_back(& curproc->ptcb_list, & ptcb->node);
 
-    ptcb->thread = spawn_thread(curproc, start_thread);
+    //ptcb->thread = spawn_thread(curproc, start_thread);
 //    Get TID of thread
-    ptcb->tid = get_tid(ptcb->thread);
+
 //    Wake the thread
+    
+    ptcb->thread = spawn_thread(curproc, start_thread);
+    ptcb->tid = (Tid_t) ptcb;
+    ptcb->thread->owner_ptcb = ptcb;
     wakeup(ptcb->thread);
+    
     return ptcb->tid;
 }
 
@@ -109,7 +122,9 @@ Tid_t sys_CreateThread(Task task, int argl, void* args)
  */
 Tid_t sys_ThreadSelf()
 {
-	return (Tid_t) CURTHREAD;
+  //TODO ask about that
+	//return (Tid_t) CURTHREAD;
+  return (Tid_t)(CURTHREAD->owner_ptcb);
 }
 
 /**
@@ -117,7 +132,40 @@ Tid_t sys_ThreadSelf()
   */
 int sys_ThreadJoin(Tid_t tid, int* exitval)
 {
-	return -1;
+  PTCB* ptcb = (PTCB*)tid;
+
+  //Check list if there is valid tid
+  if(rlist_find(&CURPROC->ptcb_list,ptcb, NULL)!=NULL){
+
+    /**Now we need to check for all the cases
+        1.Check for exited status
+        2.Check for detached status
+        3.Check that it is n
+        TODO finish with the comments
+    */
+    if( tid == sys_ThreadSelf() && ptcb->isDetached ){
+      return -1;
+    }else{
+      ptcb->refCount++;
+
+      while(ptcb->isExited == 0 && ptcb->isDetached == 0){
+        kernel_wait(&ptcb->cVar, SCHED_USER);
+      }
+
+      if(exitval!=NULL){
+        *exitval = ptcb -> exitval;
+      }
+      //Already exited
+      if (ptcb->refCount == 1)
+      {
+        rlist_remove(&ptcb->node);
+        free(ptcb);
+      }
+    }
+    
+
+  }
+  return 0;
 }
 
 /**
@@ -125,7 +173,20 @@ int sys_ThreadJoin(Tid_t tid, int* exitval)
   */
 int sys_ThreadDetach(Tid_t tid)
 {
-	return -1;
+  PTCB* ptcb = (PTCB*)tid;
+
+  //TODO write some comments
+  if(rlist_find(& CURPROC->ptcb_list, ptcb, NULL) != NULL){
+
+    if(ptcb->isExited){
+      return -1;
+    }
+    ptcb->isDetached = 1;
+    kernel_broadcast(& ptcb->cVar);
+    return 0;
+  }
+  return -1;
+  
 }
 
 /**
@@ -133,6 +194,14 @@ int sys_ThreadDetach(Tid_t tid)
   */
 void sys_ThreadExit(int exitval)
 {
+  //TODO fix
+    PTCB* cur_ptcb = CURTHREAD->owner_ptcb;
+    cur_ptcb->isExited = 1;
+    cur_ptcb->exitval = exitval;
+
+    kernel_broadcast(&cur_ptcb->cVar);
+
+    kernel_sleep(EXITED, SCHED_USER);
 
 }
 

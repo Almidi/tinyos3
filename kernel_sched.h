@@ -117,6 +117,8 @@ typedef struct thread_control_block
   struct thread_control_block * next;  /**< next context */
 //  VDK Edit
   unsigned priority;
+  unsigned int  prevQueue;
+  unsigned int mFlag;
 
   enum SCHED_CAUSE prevcause;
 } TCB;

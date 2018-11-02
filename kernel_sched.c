@@ -142,6 +142,11 @@ TCB* spawn_thread(PCB* pcb, void (*func)())
 //  VDK Edit
 //Init prev cause
   tcb->prevcause = SCHED_SPAWN;
+
+  //Priority Inversion 2nd way
+  tcb->mFlag = 0;
+  tcb->prevQueue = 0;
+
 //Init tcb on middle of priority queue
   tcb->priority = SCHED_LEVELS/2;
 //  assert(tcb->priority);
@@ -434,7 +439,7 @@ void yield(enum SCHED_CAUSE cause)
 
   switch(cause){
       case SCHED_QUANTUM:  /**< The quantum has expired */
-          current->priority++; //lower priority
+          current->priority--; //lower priority
 //        fprintf(stdout, "Quantum Yield: Level: %d\n", current->priority);
           break;
       case SCHED_IO:       /**< The thread is waiting for I/O */
@@ -444,8 +449,16 @@ void yield(enum SCHED_CAUSE cause)
       case SCHED_MUTEX:    /**< Mutex_Lock yielded on contention */
           // lower priority only when cause is SCHED_MUTEX twice in a row
           if (current->prevcause == SCHED_MUTEX){
-            current->priority++; //lower priority
+            current->priority--; //lower priority
           } 
+
+          //Priority inversion 2nd way with counter
+          // if(current->mFlag == 0){
+          //   current->prevQueue = current->priority;
+          //   current->mFlag = 1;
+          // }else{
+          //   current->priority++;
+          // }
 //        fprintf(stdout, "MUTEX Yield: Level: %d\n", current->priority);
           break;
       case SCHED_PIPE:     /**< Sleep at a pipe or socket */
@@ -472,6 +485,12 @@ void yield(enum SCHED_CAUSE cause)
   }
 
   current->prevcause = cause;
+
+  //Priority Inversion with counter
+  // if(current->mFlag == 1 && cause != SCHED_MUTEX){
+  //   current->mFlag = 0;
+  //   current->priority = current->prevQueue;
+  // }
 
   switch(current->state)
   {
