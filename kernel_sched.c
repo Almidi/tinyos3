@@ -439,7 +439,7 @@ void yield(enum SCHED_CAUSE cause)
 
   switch(cause){
       case SCHED_QUANTUM:  /**< The quantum has expired */
-          current->priority--; //lower priority
+          current->priority++; //lower priority
 //        fprintf(stdout, "Quantum Yield: Level: %d\n", current->priority);
           break;
       case SCHED_IO:       /**< The thread is waiting for I/O */
@@ -449,7 +449,7 @@ void yield(enum SCHED_CAUSE cause)
       case SCHED_MUTEX:    /**< Mutex_Lock yielded on contention */
           // lower priority only when cause is SCHED_MUTEX twice in a row
           if (current->prevcause == SCHED_MUTEX){
-            current->priority--; //lower priority
+            current->priority++; //lower priority
           } 
 
           //Priority inversion 2nd way with counter

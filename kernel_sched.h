@@ -27,9 +27,9 @@
 
 //VDK Edit
 //Scheduler Queue Size:
-#define SCHED_LEVELS 5
-#define BOOST 1000
-static unsigned boost_counter;
+#define SCHED_LEVELS 14
+#define BOOST 230
+unsigned int boost_counter;
 
 /*****************************
  *
