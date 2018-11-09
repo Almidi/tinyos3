@@ -185,6 +185,7 @@ Pid_t sys_Exec(Task call, int argl, void* args)
     the initialization of the PCB.
    */
   if(call != NULL) {
+    newproc->ptcb_counter++;
     newproc->main_thread = spawn_thread(newproc, start_main_thread);
     wakeup(newproc->main_thread);
   }
@@ -340,6 +341,18 @@ void sys_Exit(int exitval)
   /* Now, mark the process as exited. */
   curproc->pstate = ZOMBIE;
   curproc->exitval = exitval;
+
+  //VDK EDIT
+  curproc->ptcb_counter--;
+
+  //In case we find the last  ptcb clean up everything
+  //The same as ThreadExit
+    if(CURPROC->ptcb_counter == 0){
+      while(! is_rlist_empty(& (CURPROC->ptcb_list))){
+        rlnode* tmp = rlist_pop_front(&(CURPROC->ptcb_list));
+        free(tmp->ptcb);
+      }
+    }
 
   /* Bye-bye cruel world */
   kernel_sleep(EXITED, SCHED_USER);

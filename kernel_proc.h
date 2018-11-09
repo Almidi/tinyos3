@@ -73,9 +73,9 @@ typedef struct process_thread_control_block{
     int argl;
     void *args;
 
-    unsigned refCount;		//used every time in join
-    unsigned isDetached;	//used in Detached
-    unsigned isExited;
+    unsigned int refCount;		//used every time in join
+    unsigned int isDetached;	//used in Detached
+    unsigned int isExited;
     CondVar cVar;	//will be used in thread join, kernelwait
     rlnode node;
 }PTCB;
