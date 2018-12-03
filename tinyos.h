@@ -603,8 +603,8 @@ typedef struct socket_control_block {
   //3 types of sockets(enum)
   socket_type sock_type;
   union {
-    peer_socket ps; 
-    listener_socket ls;
+    peer_socket peer_sock; 
+    listener_socket listener_sock;
   };
 } SCB;
 

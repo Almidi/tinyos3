@@ -88,3 +88,37 @@ int sys_ShutDown(Fid_t sock, shutdown_mode how)
 	return -1;
 }
 
+
+
+int socket_read(void* socket, char* buf, unsigned int size)
+{
+	SCB* scb = (SCB* ) socket;
+	//the number of data that was read
+	int num_of_data = 0;
+
+	//Only peer sockets can read data
+	if(scb->socket_type == PEER){
+		//use the pipe responsible for reading data
+		num_of_data = pipe_read(scb->peer_sock->pipe_receiver, buf, size);
+		return num_of_data;
+	}
+	else
+		return -1;
+}
+
+
+int socket_write(void* socket, const char* buf, unsigned int size)
+{
+	SCB* scb = (SCB* ) socket;
+	//the number of data that was written
+	int num_of_data = 0;
+
+	//Only peer sockets can write data
+	if(scb->socket_type == PEER){
+		//use the pipe responsible for writing data
+		num_of_data = pipe_write(scb->peer_sock->pipe_sender, buf, size);
+		return num_of_data;
+	}
+	else
+		return -1;
+}
