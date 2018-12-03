@@ -6,7 +6,7 @@
 
 int socket_read(void* socket, char* buf, unsigned int size);
 int socket_write(void* socket, const char* buf, unsigned int size);
-int socket_write(void* socket);
+int socket_close(void* socket);
 
 int socket_counter = 0;
 
