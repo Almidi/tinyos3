@@ -42,7 +42,7 @@ Fid_t sys_Socket(port_t port)
 		return NOFILE;
 
 	//-----------------------initialize the scb--------------------------
-	scb->ref_count = 0;
+	scb->ref_counter = 0;
 	scb->fcb = fcb[0];
 	scb->fid = fid[0];
 	//bound the socket to the specified port
@@ -99,7 +99,7 @@ int socket_read(void* socket, char* buf, unsigned int size)
 	//Only peer sockets can read data
 	if(scb->socket_type == PEER){
 		//use the pipe responsible for reading data
-		num_of_data = pipe_read(scb->peer_sock->pipe_receiver, buf, size);
+		num_of_data = pipe_read(scb->peer_sock.pipe_receiver, buf, size);
 		return num_of_data;
 	}
 	else
@@ -116,9 +116,58 @@ int socket_write(void* socket, const char* buf, unsigned int size)
 	//Only peer sockets can write data
 	if(scb->socket_type == PEER){
 		//use the pipe responsible for writing data
-		num_of_data = pipe_write(scb->peer_sock->pipe_sender, buf, size);
+		num_of_data = pipe_write(scb->peer_sock.pipe_sender, buf, size);
 		return num_of_data;
 	}
 	else
 		return -1;
+}
+
+
+int socket_close(void* socket)
+{
+	SCB* scb = (SCB*) socket;
+	//check if the socket we are trying to close is NULL
+	if(scb == NULL)
+		return -1;
+
+	if(scb->socket_type == PEER){
+
+		//check if this peer socket is connected to another socket 
+		if(scb->peer_sock.socket_pointer != NULL){
+			//close the pipe responsible for writing data
+			close_write(scb->peer_sock.pipe_sender);
+			//close the pipe responsible for reading data
+			close_read(scb->peer_sock.pipe_receiver);
+			//decrease the reference counter of this socket
+			scb->ref_counter--;
+			//destroy the peer to peer connection  (????)
+			scb->peer_sock.socket_pointer->peer_sock.socket_pointer = NULL;
+		}
+	}
+	else if(scb->socket_type == LISTENER){
+		//transform the socket from LISTENER to UNBOUND
+		PORT_MAP[scb->port] = NULL;
+		//decrease the reference counter of this socket
+		scb->ref_counter--;
+		//-------------
+		kernel_signal(&scb->listener_socket->cv_request);
+		//while the queue that holds the requests is not empty
+		while(!is_rlist_empty(&scb->listener_socket.requestQueue)){
+			//dequeue a request from the head
+			rlnode* request = rlist_pop_front(&scb->listener_socket.requestQueue);
+			//--------------------------------------------------------------- TO DO ---------------------------
+			//wake up the listener to serve the remaining requests
+			kernel_signal(&request->cv);
+		}
+	}
+	/* If it is an UNBOUND socket, the only thing we need to do is 
+ 		to check for its reference counter and free it. */
+
+	//only if no sockets observe this socket, we can free its control block
+	if(scb->ref_counter == 0)
+		free(scb);
+
+	return 0;
+
 }

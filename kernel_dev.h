@@ -84,7 +84,7 @@ typedef struct file_operations {
     /** @brief Close operation.
 
       Close the stream object, deallocating any resources held by it.
-      This function returns 0 is it was successful and -1 if not.
+      This function returns 0 if it was successful and -1 if not.
       Although the value in case of failure is passed to the calling process,
       the stream should still be destroyed.
 

@@ -594,8 +594,8 @@ typedef struct pr_socket {
 
 
 typedef struct socket_control_block {
-  // exit someone who observes the socket
-  int ref_count; 
+  // how many sockets observe this socket
+  int ref_counter; 
   FCB* fcb;
   Fid_t fid;
   //the port to listen at
@@ -617,7 +617,7 @@ typedef struct request_queue{
   int request_flag;
   //the queue that stores the requests
   rlnode req_queue;
-} queue_reuest;
+} queue_request;
 
 
 /**
