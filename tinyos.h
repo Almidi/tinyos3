@@ -555,6 +555,17 @@ typedef int16_t port_t;
 */
 #define NOPORT ((port_t)0)
 
+//Table with the ports
+SCB* PORT_MAP[MAX_PORT+1];
+
+
+//Function that initializes the port table to NULL
+static void initialize_port_map(SCB* port_map[]){
+  for(i=0; i<= MAX_PORT+1; i++){
+    port_map[i] = NULL;
+  }
+}
+
 
 typedef enum {
     UNBOUND,
@@ -581,9 +592,10 @@ typedef struct pr_socket {
 } peer_socket;
 
 
+
 typedef struct socket_control_block {
   // exit someone who observes the socket
-  int ref_count ; 
+  int ref_count; 
   FCB* fcb;
   Fid_t fid;
   //the port to listen at
@@ -596,15 +608,7 @@ typedef struct socket_control_block {
   };
 } SCB;
 
-//Table with the ports
-SCB* PORT_MAP[MAX_PORT+1];
 
-//Function that initializes the port table to NULL
-static void initialize_port_map(SCB* port_map[]){
-  for(i=0; i<= MAX_PORT+1; i++){
-    port_map[i] = NULL;
-  }
-}
 
 typedef struct request_queue{
   SCB* scb;
@@ -627,7 +631,7 @@ typedef struct request_queue{
 	@param port the port the new socket will be bound to
 	@returns a file id for the new socket, or NOFILE on error. Possible
 		reasons for error:
-		- the port is iilegal
+		- the port is illegal
 		- the available file ids for the process are exhausted
 */
 Fid_t Socket(port_t port);
