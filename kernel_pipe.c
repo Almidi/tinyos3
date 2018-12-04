@@ -160,9 +160,7 @@ int pipe_write(void* this, const char* buf, unsigned int size){
 
 /** Just for plentitude reasons, assign in writer buffer read function
 to return -1*/
-int N_pipe_read(void* this, char *buf, unsigned int size){
-	
-
+int N_pipe_read(void* this, char *buf, unsigned int size){	
 	return -1;
 }
 

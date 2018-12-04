@@ -143,7 +143,7 @@ int socket_close(void* socket)
 			//decrease the reference counter of this socket
 			scb->ref_counter--;
 			//destroy the peer to peer connection  (????)
-			//scb->peer_sock.socket_pointer->peer_sock.socket_pointer = NULL;
+			scb->peer_sock.socket_pointer->peer_sock.socket_pointer = NULL;
 		}
 	}
 	else if(scb->sock_type == LISTENER){
@@ -160,7 +160,7 @@ int socket_close(void* socket)
 			rlnode* request = rlist_pop_front(&scb->listener_sock.requestQueue);
 			//--------------------------------------------------------------- TO CHECK ---------------------------
 			//wake up the request that was sleeping, waiting for a LISTENER  to serve it
-			//kernel_signal(&request->req->cv);
+			kernel_signal(&request->req->cv);
 		}
 	}
 	/* If it is an UNBOUND socket, the only thing we need to do is 
