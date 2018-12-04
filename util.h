@@ -9,6 +9,7 @@
 #include <errno.h>
 #include <setjmp.h>
 #include <assert.h>
+//#include <tinyos.h>
 
 /**
 	@file util.h
@@ -291,6 +292,7 @@ typedef struct core_control_block CCB;				/**< @brief Forward declaration */
 typedef struct device_control_block DCB;			/**< @brief Forward declaration */
 typedef struct file_control_block FCB;				/**< @brief Forward declaration */
 typedef struct socket_control_block SCB;			/**< @brief Forward declaration */
+typedef struct queue_request REQ;			/**< @brief Forward declaration */
 
 
 /** @brief A convenience typedef */
@@ -322,7 +324,7 @@ typedef struct resource_list_node {
     DCB* dcb;
     FCB* fcb;
     SCB* scb;
-    queue_request* req;
+    REQ* req;
     void* obj;
     rlnode_ptr node;
     intptr_t num;

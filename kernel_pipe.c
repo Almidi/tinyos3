@@ -299,8 +299,8 @@ PIPCB* pipe_Init(FCB** fcb)
 	pipcb->writerClosedFlag = 0;
 	pipcb->elementcounter = 0;
 	//---------------------------- Do we need to initialize the buffer?????? ------------------------------------------
-	pipcb->readerFCB = fidPipe[0];
-	pipcb->writerFCB = fidPipe[1];	/**INITIALIAZED THE VARIABLES BUT MAYBE THEY ARE NOT USED*/
+	pipcb->readerFCB = fcb[0];
+	pipcb->writerFCB = fcb[1];	/**INITIALIAZED THE VARIABLES BUT MAYBE THEY ARE NOT USED*/
 
 	return pipcb;
 }

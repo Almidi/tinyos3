@@ -5,6 +5,7 @@
 #include <stdint.h>
 #include "bios.h"
 #include "util.h"
+//#include "kernel_pipe.c"
 /**
   @file tinyos.h
   @brief Public kernel API
@@ -561,7 +562,7 @@ SCB* PORT_MAP[MAX_PORT+1];
 
 //Function that initializes the port table to NULL
 static void initialize_port_map(SCB* port_map[]){
-  for(i=0; i<= MAX_PORT+1; i++){
+  for(int i=0; i<= MAX_PORT+1; i++){
     port_map[i] = NULL;
   }
 }
