@@ -3,7 +3,8 @@
 #define __TINYOS_H__
 
 #include <stdint.h>
-
+#include "bios.h"
+#include "util.h"
 /**
   @file tinyos.h
   @brief Public kernel API
@@ -554,6 +555,70 @@ typedef int16_t port_t;
 */
 #define NOPORT ((port_t)0)
 
+//Table with the ports
+SCB* PORT_MAP[MAX_PORT+1];
+
+
+//Function that initializes the port table to NULL
+static void initialize_port_map(SCB* port_map[]){
+  for(i=0; i<= MAX_PORT+1; i++){
+    port_map[i] = NULL;
+  }
+}
+
+
+typedef enum {
+    UNBOUND,
+    LISTENER,
+    PEER
+} socket_type;
+
+
+typedef struct listen_socket {
+  //the queue that stores the requests for p2p connection
+  rlnode requestQueue; 
+  // condition var to check if the queue is empty
+  CondVar cv_request;  
+} listener_socket;
+
+
+typedef struct pr_socket {
+  // pointer to peer socket to connected to 
+  SCB* socket_pointer;
+  //pipe that sends data
+  PIPECB* pipe_receiver;
+  //pipe that receives data
+  PIPECB* pipe_sender;
+} peer_socket;
+
+
+
+typedef struct socket_control_block {
+  // how many sockets observe this socket
+  int ref_counter; 
+  FCB* fcb;
+  Fid_t fid;
+  //the port to listen at
+  uint port;
+  //3 types of sockets(enum)
+  socket_type sock_type;
+  union {
+    peer_socket peer_sock; 
+    listener_socket listener_sock;
+  };
+} SCB;
+
+
+
+typedef struct request_queue{
+  SCB* scb;
+  CondVar cv;
+  //(0,1): 1 if connection was successfull
+  int request_flag;
+  //the queue that stores the requests
+  rlnode req_queue;
+} queue_request;
+
 
 /**
 	@brief Return a new socket bound on a port.
@@ -566,7 +631,7 @@ typedef int16_t port_t;
 	@param port the port the new socket will be bound to
 	@returns a file id for the new socket, or NOFILE on error. Possible
 		reasons for error:
-		- the port is iilegal
+		- the port is illegal
 		- the available file ids for the process are exhausted
 */
 Fid_t Socket(port_t port);
