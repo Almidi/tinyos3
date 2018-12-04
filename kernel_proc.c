@@ -29,6 +29,12 @@ Pid_t get_pid(PCB* pcb)
   return pcb==NULL ? NOPROC : pcb-PT;
 }
 
+//VDK EDIT
+Pid_t get_ppid(PCB* pcb)
+{
+  return get_pid(CURPROC->parent);
+}
+
 /* Initialize a PCB */
 static inline void initialize_PCB(PCB* pcb)
 {
@@ -47,6 +53,8 @@ static inline void initialize_PCB(PCB* pcb)
 //  VDK Edit
   rlnode_init(& pcb->ptcb_list, NULL);
   pcb ->ptcb_counter = 0;
+
+  pcb->thread_count = 0;
 
 
   pcb->child_exit = COND_INIT;
@@ -354,14 +362,113 @@ void sys_Exit(int exitval)
       }
     }
 
+    //VDK EDIT PHASE 2
+    curproc->thread_count--;
   /* Bye-bye cruel world */
   kernel_sleep(EXITED, SCHED_USER);
 }
 
+/***************************SYSTEM INFO**********************************/
+//VDK Edit
+
+/**Read scans PT table and returns data from active pcb's*/
+int pcinfocb_read(void* this, char* buf, unsigned int size){
+  
+  PCINFOCB* pcinfocb = (PCINFOCB*)this;
+
+  /**Scan until we reach the end of the PT list*/
+  while(pcinfocb->cursor < MAX_PROC){
+
+    /**PCB PT[MAX_PROC] is defined at the top of the file.
+    We are always looking for ALIVE/ZOMBIE pcb's state so that we don't need to find 
+    pid_t check NOPROC.*/
+
+    if(PT[pcinfocb->cursor].pstate == ALIVE || PT[pcinfocb->cursor].pstate == ZOMBIE){
+      /**Allocate memory for all data(procinfo)*/
+      pcinfocb->data = (procinfo*)xmalloc(sizeof(procinfo));
+
+      /**Get info for all elements assigned in data*/
+      pcinfocb->data->pid = get_pid(& PT[pcinfocb->cursor]);
+     
+      pcinfocb->data->ppid = get_pid(PT[pcinfocb->cursor].parent);
+
+      pcinfocb->data->alive =((PT[pcinfocb->cursor].pstate == ALIVE) ? 1 : 0);
+      pcinfocb->data->thread_count = PT[pcinfocb->cursor].thread_count; /**Added thread_count attribute for phase 2*/
+      pcinfocb->data->main_task = PT[pcinfocb->cursor].main_task;
+      pcinfocb->data->argl = PT[pcinfocb->cursor].argl;
+
+      /*For args as it is mentioned in tinyos.h we must first check length argl
+      and if is not higher than max_args_size then we assign it current length.
+      Otherwise, keep size = max_args_size*/
+      if(PT[pcinfocb->cursor].argl > PROCINFO_MAX_ARGS_SIZE){
+        memcpy(pcinfocb->data->args, PT[pcinfocb->cursor].args, PROCINFO_MAX_ARGS_SIZE);
+      }else{
+        memcpy(pcinfocb->data->args, PT[pcinfocb->cursor].args, PT[pcinfocb->cursor].argl);
+      }
 
 
+      /*We use the property of C can read serial structs as char*
+      and we don't create a buffer first to put all elements inside
+      and then read from them */
+      memcpy(buf, pcinfocb->data,size);
+
+      /**Free data as we do not need it afterwards*/
+      free(pcinfocb->data);
+
+       /*Go to next pcb*/
+      pcinfocb->cursor++;
+
+      return size;
+
+    }
+
+    /*Go to next pcb*/
+    pcinfocb->cursor++;
+  }
+
+  /**When PT has finished scanning return 0 to trigger finish*/
+  return 0;
+}
+
+/**We don't need to do much. Just release the object and return 0;*/
+int pcinfocb_close(void* this){
+  free(this);
+  return 0;
+}
+
+/**Same static definition as pipes and sockets*/
+static file_ops pcinfocb_ops = {
+  .Open = NULL,  /**We don't need that we have sys_OpenInfo for this*/
+  .Read = pcinfocb_read,
+  .Write = NULL,  /** We don't need to write*/
+  .Close = pcinfocb_close
+};
+
+
+/** Here, we need to reserve FCB and construct process info control block(proc info and cursor
+for proc info size)*/
 Fid_t sys_OpenInfo()
 {
-	return NOFILE;
+  /** Similar procedure with previous IO syscalls
+  However, this time we only need 1 fcb*/
+  Fid_t fid;
+  FCB* fcb;
+
+  if(!FCB_reserve(1, &fid, &fcb)){
+    /** Case reserve FCB fails return NOFILE = -1(Invalid file)*/
+    return NOFILE;
+  }
+
+  /**Memory allocation for process info control block*/
+  PCINFOCB* pcinfocb = (PCINFOCB*)xmalloc(sizeof(PCINFOCB));
+
+  //TODO CHECK MAYBE 1
+  pcinfocb->cursor = 0;
+
+  /**Fill fcb*/
+  fcb->streamobj = pcinfocb;
+  fcb->streamfunc = &pcinfocb_ops;
+
+	return fid;
 }
 

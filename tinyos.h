@@ -739,6 +739,19 @@ typedef struct procinfo
 } procinfo;
 
 
+//VDK EDIT
+/************************PROCESS INFO CONTROL BLOCK***************************/
+
+/** All we need is a simple struct to access proc info and a cursor
+  to spot the position every time*/ 
+typedef struct procinfo_control_block{
+  
+  procinfo* data;
+
+  int cursor;
+}PCINFOCB;
+
+
 /**
 	@brief Open a kernel information stream.
 
@@ -759,7 +772,8 @@ typedef struct procinfo
  */
 Fid_t OpenInfo();
 
-
+int pcinfocb_read(void* this, char* buf, unsigned int size);
+int pcinfocb_close(void* this);
 
 
 /*******************************************

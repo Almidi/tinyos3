@@ -59,6 +59,11 @@ typedef struct process_control_block {
 
   FCB* FIDT[MAX_FILEID];  /**< The fileid table of the process */
 
+
+  //VDK EDIT Phase 2
+  /**Added thread count for sys_info*/
+  int thread_count;
+
 } PCB;
 
 

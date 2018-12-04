@@ -124,6 +124,11 @@ TCB* spawn_thread(PCB* pcb, void (*func)())
   /* The allocated thread size must be a multiple of page size */
   TCB* tcb = (TCB*) allocate_thread(THREAD_SIZE);
 
+  //VDK EDIT PHASE 2
+  /**Increase by 1 every time we create a new thread
+  Spawn thread is called for main and other threads*/
+  pcb->thread_count++;
+
   /* Set the owner pcb*/
   tcb->owner_pcb = pcb;
 

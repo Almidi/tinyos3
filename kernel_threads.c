@@ -206,6 +206,8 @@ void sys_ThreadExit(int exitval)
     PTCB* cur_ptcb = CURTHREAD->owner_ptcb;
     cur_ptcb->isExited = 1; //Exited flag to true
     cur_ptcb->exitval = exitval;
+    //VDK EDIT PHASE 2
+    CURPROC->thread_count--;
 
     kernel_broadcast(&cur_ptcb->cVar);  //Broadcast all the threads that are sleeping in this thread's cVar
 
