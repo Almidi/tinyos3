@@ -268,9 +268,25 @@ int sys_Pipe(pipe_t* pipe)
 		Also defined in tinyos.h takes tid as parameter.
 		Assign first fid to reader and second to writer
 	*/
+
+	//call the function responsible for pipe cb initialization
+	PIPECB* pipcb = pipe_Init(FCBpipe);
 	pipe->read = fidPipe[0];
 	pipe->write = fidPipe[1];
 
+	
+	/*Make first reader and second writer*/
+	FCBpipe[0]->streamobj = pipcb;
+	FCBpipe[1]->streamobj = pipcb;
+
+	FCBpipe[0]->streamfunc = &reader_ops;
+	FCBpipe[1]->streamfunc = &writer_ops;
+
+	return 0;
+}
+
+PIPCB* pipe_Init(FCB** fcb)
+{
 	/**Allocate memory for our pipe control block*/
 	PIPCB *pipcb = (PIPCB *)xmalloc(sizeof(PIPCB));
 
@@ -282,18 +298,10 @@ int sys_Pipe(pipe_t* pipe)
 	pipcb->readerClosedFlag = 0;
 	pipcb->writerClosedFlag = 0;
 	pipcb->elementcounter = 0;
-
+	//---------------------------- Do we need to initialize the buffer?????? ------------------------------------------
 	pipcb->readerFCB = fidPipe[0];
 	pipcb->writerFCB = fidPipe[1];	/**INITIALIAZED THE VARIABLES BUT MAYBE THEY ARE NOT USED*/
 
-	/*Make first reader and second writer*/
-	FCBpipe[0]->streamobj = pipcb;
-	FCBpipe[1]->streamobj = pipcb;
-
-	FCBpipe[0]->streamfunc = &reader_ops;
-	FCBpipe[1]->streamfunc = &writer_ops;
-
-	return 0;
+	return pipcb;
 }
-
 

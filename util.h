@@ -322,6 +322,7 @@ typedef struct resource_list_node {
     DCB* dcb;
     FCB* fcb;
     SCB* scb;
+    queue_request* req;
     void* obj;
     rlnode_ptr node;
     intptr_t num;

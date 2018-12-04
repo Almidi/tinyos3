@@ -1,5 +1,6 @@
 
 #include "tinyos.h"
+#include "util.h"
 #include "kernel_streams.h"
 #include "kernel_cc.h"
 
@@ -150,15 +151,16 @@ int socket_close(void* socket)
 		PORT_MAP[scb->port] = NULL;
 		//decrease the reference counter of this socket
 		scb->ref_counter--;
-		//-------------
+		//--------------------------------------------------------------- TO CHECK ---------------------------
+		//wake up the listener to serve the remaining requests
 		kernel_signal(&scb->listener_socket->cv_request);
 		//while the queue that holds the requests is not empty
 		while(!is_rlist_empty(&scb->listener_socket.requestQueue)){
 			//dequeue a request from the head
 			rlnode* request = rlist_pop_front(&scb->listener_socket.requestQueue);
-			//--------------------------------------------------------------- TO DO ---------------------------
-			//wake up the listener to serve the remaining requests
-			kernel_signal(&request->cv);
+			//--------------------------------------------------------------- TO CHECK ---------------------------
+			//wake up the request that was sleeping, waiting for a LISTENER  to serve it
+			kernel_signal(&request->req->cv);
 		}
 	}
 	/* If it is an UNBOUND socket, the only thing we need to do is 

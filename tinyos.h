@@ -586,9 +586,9 @@ typedef struct pr_socket {
   // pointer to peer socket to connected to 
   SCB* socket_pointer;
   //pipe that sends data
-  PIPECB* pipe_receiver;
+  PIPCB* pipe_receiver;
   //pipe that receives data
-  PIPECB* pipe_sender;
+  PIPCB* pipe_sender;
 } peer_socket;
 
 
