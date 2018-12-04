@@ -5,37 +5,6 @@
 #include "kernel_streams.h"	//This contains fcb
 #include <kernel_cc.h>	//This is for kernel calls
 
-#define BUFFER_SIZE 8192 /* As adviced in class*/
-
-
-
-
-/*****************************PIPE CONTROL BLOCK******************************/
-
-typedef struct Pipe_Control_Block
-{
-	char buffer[BUFFER_SIZE];	/** Our buffer*/
-
-	int readerPos;	//We need to keep variables about reader and writer position
-	int writerPos;
-
-	FCB *readerFCB, *writerFCB;	/**TODO ask where they are used*/
-
-	CondVar fullCase;
-	CondVar emptyCase;	/**We need to check whether the buffer
-						is empty which can cause problem in read(send signal in read)
-						or whether the buffer is full where can cause problem in write
-						(signal read).
-						*/
-	
-	int readerClosedFlag;
-	int writerClosedFlag;	/**MUST KNOW IF READER/WRITER IS CLOSED*/
-
-	int elementcounter;	/**We should count the elements of the buffer so that we know if 
-							the buffer is empty or full */
-}PIPCB;
-
-
 
 
 
@@ -241,6 +210,26 @@ static file_ops writer_ops = {
   .Close = pipe_writer_close
 };
 
+PIPCB* pipe_Init(FCB** fcb)
+{
+	/**Allocate memory for our pipe control block*/
+	PIPCB *pipcb = (PIPCB *)xmalloc(sizeof(PIPCB));
+
+	/** Initialiaze everything from pipe_control_block*/
+	pipcb->readerPos = 0;
+	pipcb->writerPos = 0;
+	pipcb->fullCase = COND_INIT;
+	pipcb->emptyCase = COND_INIT;
+	pipcb->readerClosedFlag = 0;
+	pipcb->writerClosedFlag = 0;
+	pipcb->elementcounter = 0;
+	//---------------------------- Do we need to initialize the buffer?????? ------------------------------------------
+	pipcb->readerFCB = fcb[0];
+	pipcb->writerFCB = fcb[1];	/**INITIALIAZED THE VARIABLES BUT MAYBE THEY ARE NOT USED*/
+
+	return pipcb;
+}
+
 
 
 /**************************INITIALITATION AND SYSCALL*********************/
@@ -270,7 +259,7 @@ int sys_Pipe(pipe_t* pipe)
 	*/
 
 	//call the function responsible for pipe cb initialization
-	PIPECB* pipcb = pipe_Init(FCBpipe);
+	PIPCB* pipcb = pipe_Init(FCBpipe);
 	pipe->read = fidPipe[0];
 	pipe->write = fidPipe[1];
 
@@ -283,25 +272,5 @@ int sys_Pipe(pipe_t* pipe)
 	FCBpipe[1]->streamfunc = &writer_ops;
 
 	return 0;
-}
-
-PIPCB* pipe_Init(FCB** fcb)
-{
-	/**Allocate memory for our pipe control block*/
-	PIPCB *pipcb = (PIPCB *)xmalloc(sizeof(PIPCB));
-
-	/** Initialiaze everything from pipe_control_block*/
-	pipcb->readerPos = 0;
-	pipcb->writerPos = 0;
-	pipcb->fullCase = COND_INIT;
-	pipcb->emptyCase = COND_INIT;
-	pipcb->readerClosedFlag = 0;
-	pipcb->writerClosedFlag = 0;
-	pipcb->elementcounter = 0;
-	//---------------------------- Do we need to initialize the buffer?????? ------------------------------------------
-	pipcb->readerFCB = fcb[0];
-	pipcb->writerFCB = fcb[1];	/**INITIALIAZED THE VARIABLES BUT MAYBE THEY ARE NOT USED*/
-
-	return pipcb;
 }
 

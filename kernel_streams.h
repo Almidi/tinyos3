@@ -127,7 +127,6 @@ void FCB_unreserve(size_t num, Fid_t *fid, FCB** fcb);
  */
 FCB* get_fcb(Fid_t fid);
 
-
 /** @} */
 
 #endif
