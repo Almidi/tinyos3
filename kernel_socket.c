@@ -68,8 +68,49 @@ Fid_t sys_Socket(port_t port)
 
 int sys_Listen(Fid_t sock)
 {
-	return -1;
+	Fid_t fid = sock;
+	//Only values 0 to MAX_FILEID-1 are legal for file descriptors.
+	if(fid < 0 || fid >= MAX_FILEID)
+		return -1;
+
+	//get the fcb from the fid
+	FCB* fcb = get_fcb(fid);
+
+	if(fcb == NULL)
+		return -1;
+
+	SCB* scb = fcb->streamobj;
+
+	if(scb == NULL)
+		return -1;
+
+	//check if the socket is bound to a valid port
+	if(scb->port > 0 && scb->port < MAX_PORT){
+		//check if the socket isn't already a LISTENER or a PEER 
+		if(scb->sock_type == UNBOUND){
+			//check if another LISTENER is already bound to this port 
+			if(PORT_MAP[scb->port] == NULL){
+
+				//Transform the socket to LISTENER at this port
+				PORT_MAP[scb->port] = scb;
+				scb->sock_type = LISTENER;
+				scb->ref_counter++;
+				//Initialize the cv of the LISTENER
+				scb->listener_sock.cv_request = COND_INIT;
+				//initialize the request queue of the LISTENER
+				rlnode_init(&scb->listener_sock.requestQueue, NULL);
+				return 0;
+			}
+			else return -1;
+		}
+		else return -1;
+	}
+	else return -1;	
+	
 }
+
+
+
 
 
 Fid_t sys_Accept(Fid_t lsock)
