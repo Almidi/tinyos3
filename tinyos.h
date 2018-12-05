@@ -533,6 +533,15 @@ typedef struct pipe_s {
 */
 int Pipe(pipe_t* pipe);
 
+int pipe_read(void* this, char *buf, unsigned int size);
+
+int pipe_write(void* this, const char* buf, unsigned int size);
+
+int pipe_writer_close(void* this);
+
+int pipe_reader_close(void* this);
+
+
 #define BUFFER_SIZE 8192 /* As adviced in class*/
 
 /*****************************PIPE CONTROL BLOCK******************************/
@@ -586,7 +595,7 @@ typedef int16_t port_t;
 typedef struct socket_control_block SCB;
 
 //Function that initializes the port table to NULL
-static void initialize_port_map(SCB* port_map[]){
+static inline void initialize_port_map(SCB* port_map[]){
   for(int i=0; i<= MAX_PORT+1; i++){
     port_map[i] = NULL;
   }

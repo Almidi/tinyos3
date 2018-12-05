@@ -39,7 +39,7 @@ Fid_t sys_Socket(port_t port)
   	SCB* scb = (SCB* ) xmalloc(sizeof(SCB));
 
   	//check if the available file ids for the process are exhausted
-  	if(! FCB_reserve(1, &fid, &fcb))
+  	if(! FCB_reserve(1, fid, fcb))
 		return NOFILE;
 
 	//-----------------------initialize the scb--------------------------
