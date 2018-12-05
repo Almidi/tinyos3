@@ -20,8 +20,8 @@ int pipe_read(void* this, char *buf, unsigned int size){
 		return -1;
 	}
 
-	//if(pipcb->elementcounter == 0 && pipcb->writerClosedFlag){
-		if(pipcb->readerPos == pipcb->writerPos && pipcb->writerClosedFlag){
+	if(pipcb->elementcounter == 0 && pipcb->writerClosedFlag){
+		//if(pipcb->readerPos == pipcb->writerPos && pipcb->writerClosedFlag){
 			//return bufParser;
 			return 0;
 		}
@@ -30,30 +30,30 @@ int pipe_read(void* this, char *buf, unsigned int size){
 
 	for(bufParser = 0; bufParser < size ; bufParser ++){
 		//TODO
-		//if(pipcb->elementcounter == 0 && pipcb->writerClosedFlag){
-		// if(pipcb->readerPos == pipcb->writerPos && pipcb->writerClosedFlag){
-		// 	//return bufParser;
-		// 	return bufParser;
-		// }
+		if(pipcb->elementcounter == 0 && pipcb->writerClosedFlag){
+		//if(pipcb->readerPos == pipcb->writerPos && pipcb->writerClosedFlag){
+			//return bufParser;
+			return bufParser;
+		}
 
 		//case full broadcast etc
-		//while(pipcb->elementcounter == 0 && pipcb->readerClosedFlag==0 && pipcb->writerClosedFlag==0){
-		while(pipcb->readerPos == pipcb->writerPos  && !pipcb->readerClosedFlag && !pipcb->writerClosedFlag){
+		while(pipcb->elementcounter == 0 && pipcb->readerClosedFlag==0 && pipcb->writerClosedFlag==0){
+		//while(pipcb->readerPos == pipcb->writerPos  && !pipcb->readerClosedFlag && !pipcb->writerClosedFlag){
 
 			kernel_broadcast(& pipcb->fullCase);
   			kernel_wait(& pipcb->emptyCase,SCHED_PIPE);
 		}
 
-		if(pipcb->elementcounter == 0 && pipcb->writerClosedFlag){
-		//if(pipcb->readerPos == pipcb->writerPos && pipcb->writerClosedFlag){
-			return bufParser;
-		}
+		// if(pipcb->elementcounter == 0 && pipcb->writerClosedFlag){
+		// //if(pipcb->readerPos == pipcb->writerPos && pipcb->writerClosedFlag){
+		// 	return bufParser;
+		// }
 
 		//TODO CHECK
 		/*When awake check if writer or reader is closed*/
-		// if(pipcb->readerClosedFlag){
-		// 	return bufParser;
-		// }
+		if(pipcb->readerClosedFlag){
+			return bufParser;
+		}
 
 		if(pipcb->elementcounter >0){
 		//if(pipcb->readerPos < pipcb->writerPos){
@@ -124,8 +124,8 @@ int pipe_write(void* this, const char* buf, unsigned int size){
 	for(bufParser = 0; bufParser < size ; bufParser ++){
 
 		//case full broadcast etc
-		while(pipcb->writerPos == BUFFER_SIZE && !pipcb->readerClosedFlag && !pipcb->writerClosedFlag){
-		//while(pipcb->elementcounter == BUFFER_SIZE && pipcb->readerClosedFlag==0){
+		//while(pipcb->writerPos == BUFFER_SIZE && !pipcb->readerClosedFlag && !pipcb->writerClosedFlag){
+		while(pipcb->elementcounter == BUFFER_SIZE && pipcb->readerClosedFlag==0){
 			kernel_broadcast(& pipcb->emptyCase);
   			kernel_wait(& pipcb->fullCase,SCHED_PIPE);
 		}
@@ -141,6 +141,7 @@ int pipe_write(void* this, const char* buf, unsigned int size){
 			return bufParser;
 		}
 
+		
 		pipcb->writerPos++;
 		if(pipcb->writerPos >= BUFFER_SIZE){
 			pipcb->writerPos = 0;
