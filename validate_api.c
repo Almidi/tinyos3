@@ -1248,7 +1248,7 @@ void check_transfer(Fid_t from, Fid_t to)
 	char buffer[12] = {[0]=0};
 	int rc;
 	ASSERT((rc=Write(from,"Hello world", 12))==12);
-	ASSERT((rc=Read(to, buffer, 12))==12);
+	ASSERT((rc=Read(to, buffer, 12))==12);	
 	ASSERT((rc=strcmp("Hello world", buffer))==0);
 }
 
@@ -1464,7 +1464,7 @@ BOOT_TEST(test_accept_unblocks_on_close,
 	Tid_t t = CreateThread(accept_connection, 0, NULL);
 
 	/* Here, we just wait some time, (of course, this is technically a race condition :-( */
-	fibo(30);
+	fibo(10);
 	Close(lsock);
 
 	ThreadJoin(t,NULL);
@@ -1557,9 +1557,10 @@ BOOT_TEST(test_socket_small_transfer,
 	ASSERT(Listen(lsock)==0);
 
 	connect_sockets(sock[0], lsock, sock+1, 100);
+
 	for(uint i=0; i< 32768; i++) {
 		check_transfer(sock[0], sock[1]);
-		check_transfer(sock[1], sock[0]);		
+		check_transfer(sock[1], sock[0]);	
 	}
 
 	return 0;

@@ -569,6 +569,9 @@ typedef struct Pipe_Control_Block
               the buffer is empty or full */
 }PIPCB;
 
+
+PIPCB* pipe_Init(FCB** fcb);
+
 /*******************************************
  *
  * Sockets (local)
@@ -618,11 +621,11 @@ typedef struct listen_socket {
 
 
 typedef struct pr_socket {
-  // pointer to peer socket to connected to 
+  // pointer to peer socket to connect to 
   SCB* socket_pointer;
-  //pipe that sends data
+  // pipe that receives data
   PIPCB* pipe_receiver;
-  //pipe that receives data
+  // pipe that sends data
   PIPCB* pipe_sender;
 } peer_socket;
 
@@ -637,6 +640,7 @@ typedef struct socket_control_block {
   uint port;
   //3 types of sockets(enum)
   socket_type sock_type;
+
   union {
     peer_socket peer_sock; 
     listener_socket listener_sock;

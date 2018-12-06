@@ -71,7 +71,7 @@ int sys_Listen(Fid_t sock)
 {
 	Fid_t fid = sock;
 	//Only values 0 to MAX_FILEID-1 are legal for file descriptors.
-	if(fid < 0 || fid >= MAX_FILEID)
+	if(fid < 0 || fid > MAX_FILEID)
 		return -1;
 
 	//get the fcb from the fid
@@ -85,6 +85,8 @@ int sys_Listen(Fid_t sock)
 	if(scb == NULL)
 		return -1;
 
+	
+
 	//check if the socket is bound to a valid port
 	if(scb->port > 0 && scb->port < MAX_PORT){
 		//check if the socket isn't already a LISTENER or a PEER 
@@ -97,9 +99,9 @@ int sys_Listen(Fid_t sock)
 				scb->sock_type = LISTENER;
 				scb->ref_counter++;
 				//Initialize the cv of the LISTENER
-				scb->listener_sock.cv_request = COND_INIT;
+				scb->listener_sock.cv_request = COND_INIT; //TODO CV For accept
 				//initialize the request queue of the LISTENER
-				rlnode_init(&scb->listener_sock.requestQueue, NULL);
+				rlnode_init(&scb->listener_sock.requestQueue, NULL); // TODO QUEUE !!!!
 				//rlnode_init(&scb->listener_sock.requestQueue, scb->listener_sock);
 				return 0;
 			}
@@ -117,7 +119,122 @@ int sys_Listen(Fid_t sock)
 
 Fid_t sys_Accept(Fid_t lsock)
 {
-	return NOFILE;
+	Fid_t listener_fid = lsock;
+	//Only values 0 to MAX_FILEID-1 are legal for file descriptors.
+	if(listener_fid < 0 || listener_fid >= MAX_FILEID){
+		return NOFILE;		
+	}
+
+
+	//get the fcb from the listener_fid
+	FCB* listener_fcb = get_fcb(listener_fid);
+
+	if(listener_fcb == NULL){
+		return NOFILE;
+	}
+
+	SCB* listener_scb = listener_fcb->streamobj;
+
+	if(listener_scb == NULL){
+		return NOFILE;
+	}
+
+	//check if the socket is bound to a valid port
+	if(listener_scb->port <= 0 || listener_scb->port > MAX_PORT){
+		return NOFILE;
+	}
+
+	if(PORT_MAP[listener_scb->port]==NULL){
+		return NOFILE;
+	}
+
+	//check if the socket is a LISTENER 
+	if(listener_scb->sock_type != LISTENER){
+		return NOFILE;
+	}
+
+
+
+	//block until requested
+	while(is_rlist_empty(&listener_scb->listener_sock.requestQueue)){
+		kernel_wait(&listener_scb->listener_sock.cv_request,SCHED_USER);
+	}
+	rlnode* request = rlist_pop_front(&listener_scb->listener_sock.requestQueue);
+
+
+	SCB* request_scb = request->req->scb;
+	FCB* request_fcb = request_scb->fcb;
+
+
+	//to accept and create the p2p connection: 
+	//create new socket Unbound in same port
+	Fid_t accept_fid = sys_Socket(request_scb->port);
+
+	//get the fcb from the listener_fid
+	FCB* accept_fcb = get_fcb(accept_fid);
+
+	if(accept_fcb == NULL){
+		return NOFILE;
+	}
+
+	SCB* accept_scb = accept_fcb->streamobj;
+
+	if(accept_scb == NULL){
+		return NOFILE;
+	}
+
+	//Make both sockets PEERS
+	request_scb->sock_type = PEER;
+	accept_scb->sock_type = PEER;
+
+
+	//connect the 2 sockets
+
+	
+	//initialize 2 pipes
+
+	FCB* fcb1[2];
+	fcb1[0] = request_fcb;
+	fcb1[1] = accept_fcb;
+
+	PIPCB* accept_pipe = pipe_Init(fcb1);
+
+	FCB* fcb2[2];
+	fcb2[0] = accept_fcb;
+	fcb2[1] = request_fcb;
+
+	PIPCB* request_pipe = pipe_Init(fcb2);
+
+
+	//Check if Pipes initialized
+	if(accept_pipe == NULL){
+		return NOFILE;
+	}
+
+	if(request_pipe == NULL){
+		return NOFILE;
+	}
+
+
+
+	//connect the 2 pipes
+	request_scb->peer_sock.pipe_receiver = accept_pipe;
+	request_scb->peer_sock.pipe_sender = request_pipe;
+	accept_scb->peer_sock.pipe_receiver = accept_pipe;
+	accept_scb->peer_sock.pipe_sender = request_pipe;
+
+	// 
+	request_scb->peer_sock.socket_pointer = accept_scb;
+	accept_scb->peer_sock.socket_pointer = request_scb;
+
+
+	//set request_flag=1 on caller socket
+	request->req->request_flag = 1;
+	//broadcast cond var
+	kernel_signal(&request->req->cv);
+
+	//return newly created socket
+	return accept_fid;
 }
 
 
@@ -155,7 +272,7 @@ int sys_Connect(Fid_t sock, port_t port, timeout_t timeout)
 		//create a queue of requests
 		queue_request* request = (queue_request* ) xmalloc(sizeof(queue_request));
 		//Initialize the control block of the queue holding the requests
-		request->scb = listener_scb;
+		request->scb = scb;
 		request->cv  = COND_INIT;
 		request->request_flag = 0;
 		rlnode_init(&request->req_queue, request);
@@ -164,20 +281,20 @@ int sys_Connect(Fid_t sock, port_t port, timeout_t timeout)
 		listener_scb->ref_counter++;
 
 		//wake up the listener to serve the new request
-		kernel_signal(&listener_scb->listener_sock.cv_request);
-
+		kernel_signal(&listener_scb->listener_sock.cv_request);  //THIS REQUEST MUST BE SERVED FROM THE LISTENER SOCKETS ACCEPT()
 		/*The new request is sleeping until either it is served by the LISTENER or 
 		  the timeout has expired. In this case, the connection has failed. 
 
 		  kernel_timedwait returns 1 for success by signal/broadcast or 0 for failure */
 		int timed_out = kernel_timedwait(&request->cv, SCHED_USER, timeout);
 		//remove the request from the queue because it was served by the LISTENER (either failed or succeeded)
+
 		rlist_remove(&request->req_queue);
 		listener_scb->ref_counter--;
 
 		//check if connection has failed due to timeout expiration
-		if(timed_out == 1)
-			return -1;
+		if(timed_out == 0)
+		 	return -1;
 		//check if the connection has succeeded
 		if(request->request_flag == 1)
 			return 0;
@@ -192,6 +309,31 @@ int sys_Connect(Fid_t sock, port_t port, timeout_t timeout)
 
 int sys_ShutDown(Fid_t sock, shutdown_mode how)
 {
+	Fid_t fid = sock;
+	//Only values 0 to MAX_FILEID-1 are legal for file descriptors.
+	if(fid < 0 || fid >= MAX_FILEID)
+		return -1;
+
+	//Get FCB
+	FCB* fcb = get_fcb(fid);
+	//Get SCB
+	SCB* scb = fcb->streamobj;
+
+	if(scb->sock_type != PEER)
+		return -1;
+
+	switch (how){
+		case SHUTDOWN_READ:
+			return pipe_reader_close(scb->peer_sock.pipe_receiver);
+		case SHUTDOWN_WRITE:
+			return pipe_writer_close(scb->peer_sock.pipe_sender);
+		case SHUTDOWN_BOTH:
+			if(pipe_reader_close(scb->peer_sock.pipe_receiver)==-1||pipe_writer_close(scb->peer_sock.pipe_sender)==-1)
+				return -1;
+			return 0;
+	}
+
+
 	return -1;
 }
 

@@ -292,7 +292,7 @@ typedef struct core_control_block CCB;				/**< @brief Forward declaration */
 typedef struct device_control_block DCB;			/**< @brief Forward declaration */
 typedef struct file_control_block FCB;				/**< @brief Forward declaration */
 typedef struct socket_control_block SCB;			/**< @brief Forward declaration */
-typedef struct request_queue REQ;			/**< @brief Forward declaration */
+typedef struct request_queue queue_request;			/**< @brief Forward declaration */
 
 
 /** @brief A convenience typedef */
@@ -324,7 +324,7 @@ typedef struct resource_list_node {
     DCB* dcb;
     FCB* fcb;
     SCB* scb;
-    REQ* req;
+    queue_request* req;
     void* obj;
     rlnode_ptr node;
     intptr_t num;

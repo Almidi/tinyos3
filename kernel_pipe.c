@@ -25,10 +25,12 @@ int pipe_read(void* this, char *buf, unsigned int size){
 			//return bufParser;
 			return 0;
 		}
+
 	
 	uint bufParser;
 
 	for(bufParser = 0; bufParser < size ; bufParser ++){
+
 		//TODO
 		if(pipcb->elementcounter == 0 && pipcb->writerClosedFlag){
 		//if(pipcb->readerPos == pipcb->writerPos && pipcb->writerClosedFlag){
@@ -39,9 +41,8 @@ int pipe_read(void* this, char *buf, unsigned int size){
 		//case full broadcast etc
 		while(pipcb->elementcounter == 0 && pipcb->readerClosedFlag==0 && pipcb->writerClosedFlag==0){
 		//while(pipcb->readerPos == pipcb->writerPos  && !pipcb->readerClosedFlag && !pipcb->writerClosedFlag){
-
-			kernel_broadcast(& pipcb->fullCase);
-  			kernel_wait(& pipcb->emptyCase,SCHED_PIPE);
+			kernel_broadcast(&pipcb->fullCase);
+  			kernel_wait(&pipcb->emptyCase,SCHED_PIPE);
 		}
 
 		// if(pipcb->elementcounter == 0 && pipcb->writerClosedFlag){
@@ -231,7 +232,7 @@ PIPCB* pipe_Init(FCB** fcb)
 
 
 
-/**************************INITIALITATION AND SYSCALL*********************/
+/**************************INITIALIZATION AND SYSCALL*********************/
 /**Syscall for pipes
 Found in tinyos.h
 Return 0 on success, -1 on error
@@ -240,7 +241,7 @@ int sys_Pipe(pipe_t* pipe)
 {
 	/**Two arrays for reader and writer*/
 	Fid_t fidPipe[2];
-	FCB *FCBpipe[2];
+	FCB *FCBpipe[2]; 
 
 	/**
 		Check if we can reserve two FCB positions for
