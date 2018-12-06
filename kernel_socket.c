@@ -153,11 +153,9 @@ Fid_t sys_Accept(Fid_t lsock)
 		return NOFILE;
 	}
 
-
-
 	//block until requested
 	while(is_rlist_empty(&listener_scb->listener_sock.requestQueue)){
-		kernel_wait(&listener_scb->listener_sock.cv_request,SCHED_USER);
+		kernel_wait(&listener_scb->listener_sock.cv_request,SCHED_PIPE);
 	}
 	rlnode* request = rlist_pop_front(&listener_scb->listener_sock.requestQueue);
 
@@ -168,7 +166,7 @@ Fid_t sys_Accept(Fid_t lsock)
 
 	//to accept and create the p2p connection: 
 	//create new socket Unbound in same port
-	Fid_t accept_fid = sys_Socket(request_scb->port);
+	Fid_t accept_fid = sys_Socket(listener_scb->port);
 
 	//get the fcb from the listener_fid
 	FCB* accept_fcb = get_fcb(accept_fid);
@@ -218,10 +216,11 @@ Fid_t sys_Accept(Fid_t lsock)
 
 
 	//connect the 2 pipes
-	request_scb->peer_sock.pipe_receiver = accept_pipe;
 	request_scb->peer_sock.pipe_sender = request_pipe;
-	accept_scb->peer_sock.pipe_receiver = accept_pipe;
-	accept_scb->peer_sock.pipe_sender = request_pipe;
+	request_scb->peer_sock.pipe_receiver = accept_pipe;
+    accept_scb->peer_sock.pipe_sender = accept_pipe;
+	accept_scb->peer_sock.pipe_receiver = request_pipe;
+
 
 	// 
 	request_scb->peer_sock.socket_pointer = accept_scb;
