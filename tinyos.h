@@ -533,6 +533,8 @@ typedef struct pipe_s {
 */
 int Pipe(pipe_t* pipe);
 
+//declaration of pipe operations
+
 int pipe_read(void* this, char *buf, unsigned int size);
 
 int pipe_write(void* this, const char* buf, unsigned int size);

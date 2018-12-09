@@ -56,10 +56,9 @@ void* allocate_PTCB(size_t size)
 #endif
 
 
-//TODO Is this correct/optimal ?
 Tid_t get_tid(TCB* tcb)
 {
-    return (tcb == NULL ? NOTHREAD : tcb);
+    return  (Tid_t) (tcb == NULL ? NOTHREAD : tcb);
 }
 
 

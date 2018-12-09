@@ -99,10 +99,9 @@ int sys_Listen(Fid_t sock)
 				scb->sock_type = LISTENER;
 				scb->ref_counter++;
 				//Initialize the cv of the LISTENER
-				scb->listener_sock.cv_request = COND_INIT; //TODO CV For accept
+				scb->listener_sock.cv_request = COND_INIT;
 				//initialize the request queue of the LISTENER
-				rlnode_init(&scb->listener_sock.requestQueue, NULL); // TODO QUEUE !!!!
-				//rlnode_init(&scb->listener_sock.requestQueue, scb->listener_sock);
+				rlnode_init(&scb->listener_sock.requestQueue, NULL);
 				return 0;
 			}
 			else return -1;
@@ -115,125 +114,103 @@ int sys_Listen(Fid_t sock)
 
 
 
-
-
 Fid_t sys_Accept(Fid_t lsock)
 {
 	Fid_t listener_fid = lsock;
+
 	//Only values 0 to MAX_FILEID-1 are legal for file descriptors.
 	if(listener_fid < 0 || listener_fid >= MAX_FILEID){
 		return NOFILE;		
 	}
 
-
 	//get the fcb from the listener_fid
 	FCB* listener_fcb = get_fcb(listener_fid);
 
-	if(listener_fcb == NULL){
+	if(listener_fcb == NULL)
 		return NOFILE;
-	}
 
 	SCB* listener_scb = listener_fcb->streamobj;
 
-	if(listener_scb == NULL){
+	if(listener_scb == NULL)
 		return NOFILE;
-	}
-
-	//check if the socket is bound to a valid port
-	if(listener_scb->port <= 0 || listener_scb->port > MAX_PORT){
-		return NOFILE;
-	}
-
-	if(PORT_MAP[listener_scb->port]==NULL){
-		return NOFILE;
-	}
 
 	//check if the socket is a LISTENER 
-	if(listener_scb->sock_type != LISTENER){
+	if(listener_scb->sock_type != LISTENER)
 		return NOFILE;
-	}
 
-	//block until requested
+	//check if the socket is bound to a valid port
+	if(listener_scb->port <= 0 || listener_scb->port > MAX_PORT || PORT_MAP[listener_scb->port]==NULL)
+		return NOFILE;	
+
+	//sleep the LISTENER until a new request is made
 	while(is_rlist_empty(&listener_scb->listener_sock.requestQueue)){
 		kernel_wait(&listener_scb->listener_sock.cv_request,SCHED_PIPE);
 	}
+	//get the request
 	rlnode* request = rlist_pop_front(&listener_scb->listener_sock.requestQueue);
 
-
-	SCB* request_scb = request->req->scb;
-	FCB* request_fcb = request_scb->fcb;
-
+	//find the socket that made the request
+	SCB* socket1_scb = request->req->scb;
+	FCB* socket1_fcb = socket1_scb->fcb;
 
 	//to accept and create the p2p connection: 
-	//create new socket Unbound in same port
-	Fid_t accept_fid = sys_Socket(listener_scb->port);
+	//create a new socket UNBOUND in the same port
+	Fid_t socket2_fid = sys_Socket(listener_scb->port);
 
-	//get the fcb from the listener_fid
-	FCB* accept_fcb = get_fcb(accept_fid);
+	//get the fcb from the new socket fid
+	FCB* socket2_fcb = get_fcb(socket2_fid);
 
-	if(accept_fcb == NULL){
+	if(socket2_fcb == NULL)
 		return NOFILE;
-	}
 
-	SCB* accept_scb = accept_fcb->streamobj;
+	//get the scb of the new socket
+	SCB* socket2_scb = socket2_fcb->streamobj;
 
-	if(accept_scb == NULL){
+	if(socket2_scb == NULL)
 		return NOFILE;
-	}
 
 	//Make both sockets PEERS
-	request_scb->sock_type = PEER;
-	accept_scb->sock_type = PEER;
+	socket1_scb->sock_type = PEER;
+	socket2_scb->sock_type = PEER;
 
+	//Now it's time to connect the 2 sockets
 
-	//connect the 2 sockets
-
-	
 	//initialize 2 pipes
 
 	FCB* fcb1[2];
-	fcb1[0] = request_fcb;
-	fcb1[1] = accept_fcb;
+	fcb1[0] = socket1_fcb;
+	fcb1[1] = socket2_fcb;
 
-	PIPCB* accept_pipe = pipe_Init(fcb1);
+	PIPCB* socket2_pipe = pipe_Init(fcb1);
 
 	FCB* fcb2[2];
-	fcb2[0] = accept_fcb;
-	fcb2[1] = request_fcb;
+	fcb2[0] = socket2_fcb;
+	fcb2[1] = socket1_fcb;
 
-	PIPCB* request_pipe = pipe_Init(fcb2);
-
+	PIPCB* socket1_pipe = pipe_Init(fcb2);
 
 	//Check if Pipes initialized
-	if(accept_pipe == NULL){
+	if(socket2_pipe == NULL || socket1_pipe == NULL)
 		return NOFILE;
-	}
 
-	if(request_pipe == NULL){
-		return NOFILE;
-	}
+	//connect the 2 sockets by connecting the 2 pipes
+	socket1_scb->peer_sock.pipe_sender = socket1_pipe;
+	socket1_scb->peer_sock.pipe_receiver = socket2_pipe;
+    socket2_scb->peer_sock.pipe_sender = socket2_pipe;
+	socket2_scb->peer_sock.pipe_receiver = socket1_pipe;
 
-
-
-	//connect the 2 pipes
-	request_scb->peer_sock.pipe_sender = request_pipe;
-	request_scb->peer_sock.pipe_receiver = accept_pipe;
-    accept_scb->peer_sock.pipe_sender = accept_pipe;
-	accept_scb->peer_sock.pipe_receiver = request_pipe;
+	//each socket has a pointer to show to the other socket connected to
+	socket1_scb->peer_sock.socket_pointer = socket2_scb;
+	socket2_scb->peer_sock.socket_pointer = socket1_scb;
 
 
-	// 
-	request_scb->peer_sock.socket_pointer = accept_scb;
-	accept_scb->peer_sock.socket_pointer = request_scb;
-
-
-	//set request_flag=1 on caller socket
+	//set request_flag = 1 because the connection was successfull
 	request->req->request_flag = 1;
-	//broadcast cond var
+	//wake up the request
 	kernel_signal(&request->req->cv);
 
-	//return newly created socket
-	return accept_fid;
+	//return newly created socket fid
+	return socket2_fid;
 }
 
 
@@ -318,21 +295,23 @@ int sys_ShutDown(Fid_t sock, shutdown_mode how)
 	//Get SCB
 	SCB* scb = fcb->streamobj;
 
+	//only PEER sockets can be shutdown
 	if(scb->sock_type != PEER)
 		return -1;
 
 	switch (how){
 		case SHUTDOWN_READ:
+			//close the read function of the other PEER socket
 			return pipe_reader_close(scb->peer_sock.pipe_receiver);
 		case SHUTDOWN_WRITE:
+			//close the write function of the other PEER socket
 			return pipe_writer_close(scb->peer_sock.pipe_sender);
 		case SHUTDOWN_BOTH:
+			//close both the read and write function of the other PEER socket
 			if(pipe_reader_close(scb->peer_sock.pipe_receiver)==-1||pipe_writer_close(scb->peer_sock.pipe_sender)==-1)
 				return -1;
 			return 0;
 	}
-
-
 	return -1;
 }
 
@@ -389,7 +368,7 @@ int socket_close(void* socket)
 			pipe_reader_close(scb->peer_sock.pipe_receiver);
 			//decrease the reference counter of this socket
 			scb->ref_counter--;
-			//destroy the peer to peer connection  (????)
+			//destroy the peer to peer connection 
 			scb->peer_sock.socket_pointer->peer_sock.socket_pointer = NULL;
 		}
 	}
@@ -398,14 +377,12 @@ int socket_close(void* socket)
 		PORT_MAP[scb->port] = NULL;
 		//decrease the reference counter of this socket
 		scb->ref_counter--;
-		//--------------------------------------------------------------- TO CHECK ---------------------------
 		//wake up the listener to serve the remaining requests
 		kernel_signal(&scb->listener_sock.cv_request);
 		//while the queue that holds the requests is not empty
 		while(!is_rlist_empty(&scb->listener_sock.requestQueue)){
 			//dequeue a request from the head
 			rlnode* request = rlist_pop_front(&scb->listener_sock.requestQueue);
-			//--------------------------------------------------------------- TO CHECK ---------------------------
 			//wake up the request that was sleeping, waiting for a LISTENER  to serve it
 			kernel_signal(&request->req->cv);
 		}
@@ -418,5 +395,4 @@ int socket_close(void* socket)
 		free(scb);
 
 	return 0;
-
 }
